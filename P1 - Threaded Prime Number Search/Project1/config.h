@@ -7,6 +7,8 @@ class Config {
 public:
 	static int x;
 	static int y;
+	static int variant;
+
 	static int range;
 
 	static std::vector<int> startRange;

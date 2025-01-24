@@ -8,9 +8,12 @@
 #include <thread>
 #include <chrono> 
 #include <ctime> 
+#include <windows.h>
 
 std::vector<int> Config::startRange;
 std::vector<int> Config::endRange;
+
+int Config::variant = 0;
 
 SearchPrime primeSearcher;
 std::vector<std::thread> childThreads;
@@ -34,6 +37,9 @@ void getConfigValues() {
 		else if (parameter == "y") {
 			Config::y = std::stoi(value);
 			//std::cout << config.y << std::endl;
+		}
+		else if (parameter == "variant") {
+			Config::variant = std::stoi(value);;
 		}
 	}
 
@@ -90,6 +96,13 @@ void firstCombinationVariant() {
 	// Printing Variant: Print Immediately
 	// Task Division Scheme: Straight division of search range.
 
+	std::cout << "[Current Setting: Variant #1]" << std::endl;
+	std::cout << "[Print Variant: Print-Immediately]" << std::endl;
+	std::cout << "[Task Division Scheme: Straight division of search range]" << std::endl;
+	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
+	Sleep(5000);
+	std::cout << "The code awakens!" << std::endl;
+
 	//Timestamp
 	time_t currTime;
 	char timeCreation[50];
@@ -118,10 +131,16 @@ void firstCombinationVariant() {
 
 void secondCombinationVariant() {
 
-	// 2nd Implementation:
-	// Printing Variant: Wait until all threads are done then print everything.
-	// Task Division Scheme: The search is linear but the threads are for divisibility testing of individual numbers. ( NOT IMPLEMENTED YET )
-	//		Per number, itetest ng isang thread kung prime or hindi.
+	// Current Implementation:
+	// Printing Variant: Wait-All-Threads
+	// Task Division Scheme: Straight division of search range.
+	
+	std::cout << "[Current Setting: Variant #2]" << std::endl;
+	std::cout << "[Print Variant: Wait-All-Threads]" << std::endl;
+	std::cout << "[Task Division Scheme: Straight division of search range]" << std::endl;
+	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
+	Sleep(5000);
+	std::cout << "The code awakens!" << std::endl;
 
 	//Timestamp
 	time_t currTime;
@@ -142,7 +161,7 @@ void secondCombinationVariant() {
 
 	Config& config = Config::getInstance();
 
-	std::cout << "All threads finished!!" << std::endl;
+	std::cout << "\nAll threads finished!!" << std::endl;
 
 	for (int i = 0; i < config.printResult.size(); i++) {
 		std::cout << config.printResult.at(i) << std::endl;
@@ -156,8 +175,21 @@ int main() {
 	getConfigValues();
 	determineRange();
 
-	firstCombinationVariant();
-	//secondCombinationVariant();
+	if (Config::variant == 1) {
+		firstCombinationVariant();
+	}
+	else if (Config::variant == 2) {
+		secondCombinationVariant();
+	}
+	else if (Config::variant == 3) {
+		std::cout << "Not Implemented Yet!" << std::endl;
+	}
+	else if (Config::variant == 4) {
+		std::cout << "Not Implemented Yet!" << std::endl;
+	}
+	else {
+		std::cout << "Choose between [1 to 4] only." << std::endl;
+	}
 
 	return 0;
 }
