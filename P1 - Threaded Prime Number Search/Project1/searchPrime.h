@@ -5,7 +5,8 @@
 class SearchPrime {
 
 public:
-	void findPrimeNumbers(int primeID, std::string timeStamp, int startRange, int endRange, std::string printVariant);
+	void splitsFindPrimeNumbers(int threadID, std::string timeStamp, int startRange, int endRange, std::string printVariant);
+	void divisibleTester(int threadID, std::string timeStamp, std::string printVariant);
 
 private:
 

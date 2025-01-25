@@ -9,9 +9,11 @@
 #include <chrono> 
 #include <ctime> 
 #include <windows.h>
+#include <semaphore> //https://www.geeksforgeeks.org/cpp-20-semaphore-header/
 
 std::vector<int> Config::startRange;
 std::vector<int> Config::endRange;
+std::vector<int> Config::lookUpNumbers;
 
 int Config::variant = 0;
 
@@ -115,18 +117,10 @@ void firstCombinationVariant() {
 	// This waits Thread 0 to complete for Thread 1 to run and so on.
 	// Also, all threads are created at the same time, it is just that it is not executed concurrently. This is becase of .join().
 	for (int i = 0; i < Config::x; i++ ) {
-		std::thread thread_obj(&SearchPrime::findPrimeNumbers, &primeSearcher, i, timeCreated, Config::startRange.at(i), Config::endRange.at(i), "immediate");
+		std::thread thread_obj(&SearchPrime::splitsFindPrimeNumbers, &primeSearcher, i, timeCreated, Config::startRange.at(i), Config::endRange.at(i), "immediate");
 		thread_obj.join();
-		//childThreads.push_back(std::move(thread_obj));
-	}
+	} 
 
-	// Problem encountered on why .detach() doesnt work: main thread is exiting before the child threads finishes.
-	// Solution: Uncomment line 106, 111, and 112
-	// Problem encountered: Hindi mabasa ung started at ended.
-	// Solution: Store the strings into one variable then print after all threads finishes. <--- Do this.
-	//for (int i = 0; i < Config::x; i++) { 
-	//	childThreads.at(i).join();
-	//}
 }
 
 void secondCombinationVariant() {
@@ -152,8 +146,9 @@ void secondCombinationVariant() {
 	std::string timeCreated = (std::string)timeCreation;
 
 	for (int i = 0; i < Config::x; i++) {
-		childThreads.emplace_back(std::thread(&SearchPrime::findPrimeNumbers, &primeSearcher, i, timeCreated, Config::startRange.at(i), Config::endRange.at(i), "wait"));
+		childThreads.emplace_back(std::thread(&SearchPrime::splitsFindPrimeNumbers, &primeSearcher, i, timeCreated, Config::startRange.at(i), Config::endRange.at(i), "wait"));
 	}
+	std::cout << "\n" << Config::x << " threads has been created!" << std::endl;
 
 	for (auto& th : childThreads) {
 		th.join();
@@ -169,6 +164,88 @@ void secondCombinationVariant() {
 	
 }
 
+void thirdCombinationVariant() {
+
+	std::cout << "[Current Setting: Variant #3]" << std::endl;
+	std::cout << "[Print Variant: Print-Immediately]" << std::endl;
+	std::cout << "[Task Division Scheme: The search is linear but the threads are for divisibility testing of individual numbers.]" << std::endl;
+	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
+	Sleep(5000);
+	std::cout << "The code awakens!" << std::endl;
+
+	//Timestamp
+	time_t currTime;
+	char timeCreation[50];
+	struct tm datetime;
+	time(&currTime);
+	localtime_s(&datetime, &currTime);
+	strftime(timeCreation, sizeof(timeCreation), "%m/%d/%Y %I:%M:%S%p", &datetime);
+	std::string timeCreated = (std::string)timeCreation;
+
+	// Create a look-up table
+	for (int i = 1; i <= Config::y; i++) {
+		Config::lookUpNumbers.push_back(i);
+	}
+	std::cout << "\nLook-up Table: Initialized!" << std::endl;
+
+	// Create X number of threads
+	std::vector<std::thread> childThreads; 
+	for (int i = 0; i < Config::x; i++) {
+		childThreads.emplace_back(std::thread(&SearchPrime::divisibleTester, &primeSearcher, i, timeCreated, "immediate"));
+	}
+	std::cout << "\n" << Config::x << " threads has been created!" << std::endl;
+
+	for (int i = 0; i < Config::x; i++) { 
+		childThreads.at(i).join();
+	}
+
+}
+
+void fourthCombinationVariant() {
+
+	std::cout << "[Current Setting: Variant #4]" << std::endl;
+	std::cout << "[Print Variant: Wait-All-Threads]" << std::endl;
+	std::cout << "[Task Division Scheme: The search is linear but the threads are for divisibility testing of individual numbers.]" << std::endl;
+	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
+	Sleep(5000);
+	std::cout << "The code awakens!" << std::endl;
+
+	//Timestamp
+	time_t currTime;
+	char timeCreation[50];
+	struct tm datetime;
+	time(&currTime);
+	localtime_s(&datetime, &currTime);
+	strftime(timeCreation, sizeof(timeCreation), "%m/%d/%Y %I:%M:%S%p", &datetime);
+	std::string timeCreated = (std::string)timeCreation;
+
+	// Create a look-up table
+	for (int i = 1; i <= Config::y; i++) {
+		Config::lookUpNumbers.push_back(i);
+	}
+	std::cout << "\nLook-up Table: Initialized!" << std::endl;
+
+	// Create X number of threads
+	std::vector<std::thread> childThreads;
+	for (int i = 0; i < Config::x; i++) {
+		childThreads.emplace_back(std::thread(&SearchPrime::divisibleTester, &primeSearcher, i, timeCreated, "wait"));
+	}
+	std::cout << "\n" << Config::x << " threads has been created!" << std::endl;
+
+	for (int i = 0; i < Config::x; i++) {
+		childThreads.at(i).join();
+	}
+
+	Config& config = Config::getInstance();
+
+	std::cout << "\nAll threads finished!" << std::endl;
+
+	for (int i = 0; i < config.printResult.size(); i++) {
+		std::cout << config.printResult.at(i) << std::endl;
+	}
+
+}
+
 int main() {
 
 	//Initialize
@@ -182,10 +259,10 @@ int main() {
 		secondCombinationVariant();
 	}
 	else if (Config::variant == 3) {
-		std::cout << "Not Implemented Yet!" << std::endl;
+		thirdCombinationVariant();
 	}
 	else if (Config::variant == 4) {
-		std::cout << "Not Implemented Yet!" << std::endl;
+		fourthCombinationVariant();
 	}
 	else {
 		std::cout << "Choose between [1 to 4] only." << std::endl;
