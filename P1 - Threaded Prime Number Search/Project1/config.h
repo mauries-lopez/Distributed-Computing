@@ -11,8 +11,12 @@ public:
 	static int variant;
 
 	static std::vector<int> lookUpNumbers;
+	static std::vector<int> lookUpNumbersFactors;
 	static std::counting_semaphore<1> semaphore;  // Semaphore to control access to removing numbers
+
 	static std::mutex lookUpNumbersMutex;
+	static std::mutex lookUpNumbersFactorsMutex;
+	static std::mutex factorCounterMutex;
 	static std::mutex printMutex;
 
 	static std::vector<int> startRange;

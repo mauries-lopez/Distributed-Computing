@@ -170,7 +170,7 @@ void thirdCombinationVariant() {
 	std::cout << "[Print Variant: Print-Immediately]" << std::endl;
 	std::cout << "[Task Division Scheme: The search is linear but the threads are for divisibility testing of individual numbers.]" << std::endl;
 	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
-	Sleep(5000);
+	//Sleep(5000);
 	std::cout << "The code awakens!" << std::endl;
 
 	//Timestamp
@@ -186,23 +186,26 @@ void thirdCombinationVariant() {
 	for (int i = 1; i <= Config::y; i++) {
 		Config::lookUpNumbers.push_back(i);
 	}
-	std::cout << "\nLook-up Table: Initialized!" << std::endl;
+	std::cout << "\nLook-up Tables: Initialized!" << std::endl;
+
+	primeSearcher.divisibleTester("immediate");
 
 	// Create X number of threads
-	std::vector<std::thread> childThreads; 
-	for (int i = 0; i < Config::x; i++) {
-		childThreads.emplace_back(std::thread(&SearchPrime::divisibleTester, &primeSearcher, i, timeCreated, "immediate"));
-	}
-	std::cout << "\n" << Config::x << " threads has been created!" << std::endl;
+	//std::vector<std::thread> childThreads; 
+	//for (int i = 0; i < Config::x; i++) {
+	//	childThreads.emplace_back(std::thread(&SearchPrime::divisibleTester, &primeSearcher, i, timeCreated, "immediate"));
+	//}
+	//std::cout << "\n" << Config::x << " threads has been created!" << std::endl;
 
-	for (int i = 0; i < Config::x; i++) { 
-		childThreads.at(i).join();
-	}
+	//for (int i = 0; i < Config::x; i++) { 
+	//	childThreads.at(i).join();
+	//}
 
 }
 
 void fourthCombinationVariant() {
 
+	/*
 	std::cout << "[Current Setting: Variant #4]" << std::endl;
 	std::cout << "[Print Variant: Wait-All-Threads]" << std::endl;
 	std::cout << "[Task Division Scheme: The search is linear but the threads are for divisibility testing of individual numbers.]" << std::endl;
@@ -243,6 +246,8 @@ void fourthCombinationVariant() {
 	for (int i = 0; i < config.printResult.size(); i++) {
 		std::cout << config.printResult.at(i) << std::endl;
 	}
+
+	*/
 
 }
 
