@@ -7,10 +7,7 @@ class SearchPrime {
 public:
 	void splitsFindPrimeNumbers(int threadID, std::string timeStamp, int startRange, int endRange, std::string printVariant);
 	void divisibleTester(std::string printVariant);
-	void testForDivisible(int threadID, int num);
-
+	void testForDivisible(int threadID, int num, std::string printVariant);
 private:
-
-	//int factorCounter = 0;
 
 };

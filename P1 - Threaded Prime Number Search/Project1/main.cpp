@@ -9,7 +9,6 @@
 #include <chrono> 
 #include <ctime> 
 #include <windows.h>
-#include <semaphore> //https://www.geeksforgeeks.org/cpp-20-semaphore-header/
 
 std::vector<int> Config::startRange;
 std::vector<int> Config::endRange;
@@ -78,7 +77,6 @@ void determineRange() {
 			else {
 				Config::endRange.push_back((Config::y - (firstEndRange * Config::x)) + (firstEndRange * Config::x)); //Example: [246,492,738,984, (1234-1230) + 1230)]
 			}
-			//std::cout << Config::endRange.at(i-1) << std::endl;
 		}
 
 		//Start Ranges
@@ -86,7 +84,6 @@ void determineRange() {
 		Config::startRange.push_back(0);
 		for (int i = 0; i < Config::endRange.size(); i++) {
 			Config::startRange.push_back(Config::endRange.at(i) + 1);
-			//std::cout << Config::startRange.at(i) << std::endl;
 		}
 	}
 
@@ -105,18 +102,19 @@ void firstCombinationVariant() {
 	Sleep(5000);
 	std::cout << "The code awakens!" << std::endl;
 
-	//Timestamp
-	time_t currTime;
-	char timeCreation[50];
-	struct tm datetime;
-	time(&currTime);
-	localtime_s(&datetime, &currTime);
-	strftime(timeCreation, sizeof(timeCreation), "%m/%d/%Y %I:%M:%S%p", &datetime);
-	std::string timeCreated = (std::string)timeCreation;
-
 	// This waits Thread 0 to complete for Thread 1 to run and so on.
 	// Also, all threads are created at the same time, it is just that it is not executed concurrently. This is becase of .join().
 	for (int i = 0; i < Config::x; i++ ) {
+
+		//Timestamp
+		time_t currTime;
+		char timeCreation[50];
+		struct tm datetime;
+		time(&currTime);
+		localtime_s(&datetime, &currTime);
+		strftime(timeCreation, sizeof(timeCreation), "%m/%d/%Y %I:%M:%S%p", &datetime);
+		std::string timeCreated = (std::string)timeCreation;
+
 		std::thread thread_obj(&SearchPrime::splitsFindPrimeNumbers, &primeSearcher, i, timeCreated, Config::startRange.at(i), Config::endRange.at(i), "immediate");
 		thread_obj.join();
 	} 
@@ -136,32 +134,32 @@ void secondCombinationVariant() {
 	Sleep(5000);
 	std::cout << "The code awakens!" << std::endl;
 
-	//Timestamp
-	time_t currTime;
-	char timeCreation[50];
-	struct tm datetime;
-	time(&currTime);
-	localtime_s(&datetime, &currTime);
-	strftime(timeCreation, sizeof(timeCreation), "%m/%d/%Y %I:%M:%S%p", &datetime);
-	std::string timeCreated = (std::string)timeCreation;
-
 	for (int i = 0; i < Config::x; i++) {
+
+		//Timestamp
+		time_t currTime;
+		char timeCreation[50];
+		struct tm datetime;
+		time(&currTime);
+		localtime_s(&datetime, &currTime);
+		strftime(timeCreation, sizeof(timeCreation), "%m/%d/%Y %I:%M:%S%p", &datetime);
+		std::string timeCreated = (std::string)timeCreation;
+
 		childThreads.emplace_back(std::thread(&SearchPrime::splitsFindPrimeNumbers, &primeSearcher, i, timeCreated, Config::startRange.at(i), Config::endRange.at(i), "wait"));
 	}
 	std::cout << "\n" << Config::x << " threads has been created!" << std::endl;
 
+	std::cout << "Processing..." << std::endl;
+
 	for (auto& th : childThreads) {
 		th.join();
 	}
-
-	Config& config = Config::getInstance();
-
 	std::cout << "\nAll threads finished!!" << std::endl;
 
+	Config& config = Config::getInstance();
 	for (int i = 0; i < config.printResult.size(); i++) {
 		std::cout << config.printResult.at(i) << std::endl;
 	}
-	
 }
 
 void thirdCombinationVariant() {
@@ -170,17 +168,8 @@ void thirdCombinationVariant() {
 	std::cout << "[Print Variant: Print-Immediately]" << std::endl;
 	std::cout << "[Task Division Scheme: The search is linear but the threads are for divisibility testing of individual numbers.]" << std::endl;
 	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
-	//Sleep(5000);
+	Sleep(5000);
 	std::cout << "The code awakens!" << std::endl;
-
-	//Timestamp
-	time_t currTime;
-	char timeCreation[50];
-	struct tm datetime;
-	time(&currTime);
-	localtime_s(&datetime, &currTime);
-	strftime(timeCreation, sizeof(timeCreation), "%m/%d/%Y %I:%M:%S%p", &datetime);
-	std::string timeCreated = (std::string)timeCreation;
 
 	// Create a look-up table
 	for (int i = 1; i <= Config::y; i++) {
@@ -189,23 +178,10 @@ void thirdCombinationVariant() {
 	std::cout << "\nLook-up Tables: Initialized!" << std::endl;
 
 	primeSearcher.divisibleTester("immediate");
-
-	// Create X number of threads
-	//std::vector<std::thread> childThreads; 
-	//for (int i = 0; i < Config::x; i++) {
-	//	childThreads.emplace_back(std::thread(&SearchPrime::divisibleTester, &primeSearcher, i, timeCreated, "immediate"));
-	//}
-	//std::cout << "\n" << Config::x << " threads has been created!" << std::endl;
-
-	//for (int i = 0; i < Config::x; i++) { 
-	//	childThreads.at(i).join();
-	//}
-
 }
 
 void fourthCombinationVariant() {
 
-	/*
 	std::cout << "[Current Setting: Variant #4]" << std::endl;
 	std::cout << "[Print Variant: Wait-All-Threads]" << std::endl;
 	std::cout << "[Task Division Scheme: The search is linear but the threads are for divisibility testing of individual numbers.]" << std::endl;
@@ -213,42 +189,51 @@ void fourthCombinationVariant() {
 	Sleep(5000);
 	std::cout << "The code awakens!" << std::endl;
 
-	//Timestamp
-	time_t currTime;
-	char timeCreation[50];
-	struct tm datetime;
-	time(&currTime);
-	localtime_s(&datetime, &currTime);
-	strftime(timeCreation, sizeof(timeCreation), "%m/%d/%Y %I:%M:%S%p", &datetime);
-	std::string timeCreated = (std::string)timeCreation;
-
 	// Create a look-up table
 	for (int i = 1; i <= Config::y; i++) {
 		Config::lookUpNumbers.push_back(i);
 	}
-	std::cout << "\nLook-up Table: Initialized!" << std::endl;
+	std::cout << "\nLook-up Tables: Initialized!" << std::endl;
 
-	// Create X number of threads
-	std::vector<std::thread> childThreads;
+	std::cout << "Processing...\n" << std::endl;
+
+	// Store Thread Information
 	for (int i = 0; i < Config::x; i++) {
-		childThreads.emplace_back(std::thread(&SearchPrime::divisibleTester, &primeSearcher, i, timeCreated, "wait"));
+		// Create Object
+		ThreadInfo threadInfo;
+
+		// Thread ID
+		threadInfo.threadID = i;
+
+		// Create array of array of strings
+		Config::threadStorage.push_back(threadInfo);
 	}
-	std::cout << "\n" << Config::x << " threads has been created!" << std::endl;
+
+	// Start Prime Test
+	primeSearcher.divisibleTester("wait");
+
+	// Initialize a variable to store the largest endTime
+	std::string largestEndTime = Config::threadStorage.at(0).endTime;
 
 	for (int i = 0; i < Config::x; i++) {
-		childThreads.at(i).join();
+		if (!Config::threadStorage.at(i).primeNumbers.empty()) {
+			std::cout << "[Thread #" << Config::threadStorage.at(i).threadID << "]" << Config::threadStorage.at(i).startTime << std::endl;
+			for (int b = 0; b < Config::threadStorage.at(i).primeNumbers.size(); b++) {
+				std::cout << Config::threadStorage.at(i).primeNumbers.at(b) << " ";
+			}
+			std::cout << "\n" << Config::threadStorage.at(i).endTime << "\n" << std::endl;
+		}
+		else {
+			std::cout << "[Thread #" << Config::threadStorage.at(i).threadID << "]" << Config::threadStorage.at(i).startTime << std::endl;
+			std::cout << "No stored prime numbers";
+			std::cout << "\n" << Config::threadStorage.at(i).endTime << "\n" << std::endl;
+		}
+
+		// To get the latest time ended of a thread (the last execution of it), we will compare all recorded execution of the thread and find the largest end time.
+		if (Config::threadStorage.at(i).endTime > largestEndTime) {
+			largestEndTime = Config::threadStorage.at(i).endTime;
+		}
 	}
-
-	Config& config = Config::getInstance();
-
-	std::cout << "\nAll threads finished!" << std::endl;
-
-	for (int i = 0; i < config.printResult.size(); i++) {
-		std::cout << config.printResult.at(i) << std::endl;
-	}
-
-	*/
-
 }
 
 int main() {
