@@ -9,6 +9,7 @@
 #include <chrono> 
 #include <ctime> 
 #include <windows.h>
+#include <ctype.h> 
 
 std::vector<int> Config::startRange;
 std::vector<int> Config::endRange;
@@ -18,6 +19,114 @@ int Config::variant = 0;
 
 SearchPrime primeSearcher;
 std::vector<std::thread> childThreads;
+
+// Helper function for validation test
+void helperValidationTest(std::string type, std::string value) {
+
+	// 'General' validation list:
+	// 1. Check if one is missing. If atleast one missing, give error. Else, continue
+	// 2. Check if config file is empty
+	// 3. If all values are in maximum amount of int
+	// 4. Duplicated entries (e.g. x 100 x 200)
+
+	// 'x|y' validation list:
+	// 1. Number only [/]
+	// 2. No texts (e.g. no special characters) [/]
+	// 3. Empty value [/]
+	// 4. Negative values [/]
+	// 5. Value range [?]
+	// 6. Decimal [/]
+	// 7. Multiple values (e.g. 'x 1 100') [?]
+
+	if (type == "number") {
+		std::string tempX = value;
+		bool isPassedStringCheck = false;
+		bool isPassedNumberCheck = false;
+		while (isPassedStringCheck == false && isPassedNumberCheck == false) {
+			// [First Check: String-related validation && Decimal (due to '.' character is checked) && Negative (due to '-' character is checked)]
+			for (char c : tempX) {
+				if (!std::isdigit(c)) {
+					isPassedStringCheck = false;
+					break;
+				}
+				else {
+					isPassedStringCheck = true;
+				}
+			}
+			if (isPassedStringCheck == false) {
+				std::cout << "[ERROR: Characters are not allowed. Enter numerical values only.]" << std::endl;
+				std::cout << "Enter 'x' value: ";
+				std::cin >> tempX;
+			}
+			// [Second Check: Number-related validation]
+			if (isPassedStringCheck == true && isPassedNumberCheck == false) {
+				//Convert to integer value
+				std::string tempInt = std::string(tempX);
+				int tempXInt = std::stoi(tempInt);
+				bool isPassedRangeCheck = false;
+				// From 1 to y											// CONTINUE HERE!!!
+				if (tempXInt >= 1 && tempXInt <= Config::y){
+					isPassedRangeCheck = true;
+					//Temporary
+					isPassedNumberCheck = true;
+					Config::x = tempXInt;
+				}
+				else {
+					std::cout << "[ERROR: Invalid number. Enter number greater or equal to 1.]" << std::endl;
+					std::cout << "Enter 'x' value: ";
+					std::cin >> tempXInt;
+				}
+			}
+		}
+	}
+}
+
+void helperPrintThreadInfo() {
+	// Set smallest start time and largest end time for each thread
+	for (int i = 0; i < Config::x; i++) {
+		// For each thread, get the proper timestamps
+		if (!Config::threadStorage.at(i).startTime.empty() && !Config::threadStorage.at(i).endTime.empty()) {
+			// https://www.geeksforgeeks.org/how-to-find-minimum-element-in-vector-in-cpp/
+			// Find the smallest start time and assign it to .at(0)
+			Config::threadStorage.at(i).startTime.at(0) = *std::min_element(Config::threadStorage.at(i).startTime.begin(), Config::threadStorage.at(i).startTime.end());
+			// Find the largest end time and assign it to .at(0)
+			Config::threadStorage.at(i).endTime.at(0) = *std::max_element(Config::threadStorage.at(i).endTime.begin(), Config::threadStorage.at(i).endTime.end());
+		}
+	}
+
+	for (int i = 0; i < Config::x; i++) {
+		if (!Config::threadStorage.at(i).primeNumbers.empty()) {
+			std::cout
+				<< "[Thread #" << Config::threadStorage.at(i).threadID << "] (From "
+				<< Config::threadStorage.at(i).startTime.at(0)
+				<< "ms"
+				<< " to "
+				<< Config::threadStorage.at(i).endTime.at(0)
+				<< "ms)"
+				<< std::endl;
+			for (int b = 0; b < Config::threadStorage.at(i).primeNumbers.size(); b++) {
+				std::cout << Config::threadStorage.at(i).primeNumbers.at(b) << " ";
+			}
+
+			//Next Thread
+			std::cout << "\n\n";
+			//std::cout << "\n" << Config::threadStorage.at(i).endTime.at(0) << "ms" << "\n" << std::endl;
+		}
+		else {
+			std::cout
+				<< "[Thread #" << Config::threadStorage.at(i).threadID << "] (From "
+				<< Config::threadStorage.at(i).startTime.at(0)
+				<< "ms"
+				<< " to "
+				<< Config::threadStorage.at(i).endTime.at(0)
+				<< "ms)"
+				<< std::endl;
+			std::cout << "No stored prime numbers";
+			//Next Thread
+			std::cout << "\n\n";
+		}
+	}
+}
 
 // Problem [2]: The values x and y should be configurable in a separate config file. x: number of threads, y: number to use
 // I/O File
@@ -30,10 +139,8 @@ void getConfigValues() {
 	while (std::getline(input, parameter)) {
 		std::istringstream stream(parameter);
 		stream >> parameter >> value;
-
 		if (parameter == "x") {
-			Config::x = std::stoi(value);
-			//std::cout << config.x << std::endl;
+			helperValidationTest("number", value);
 		}
 		else if (parameter == "y") {
 			Config::y = std::stoi(value);
@@ -43,7 +150,6 @@ void getConfigValues() {
 			Config::variant = std::stoi(value);;
 		}
 	}
-
 	input.close();
 }
 
@@ -61,7 +167,7 @@ void determineRange() {
 
 		//Start Ranges
 		int firstStartRange = 0;
-		Config::startRange.push_back(0);
+		Config::startRange.push_back(1);
 		for (int i = 0; i < Config::endRange.size(); i++) {
 			Config::startRange.push_back(Config::endRange.at(i) + 1);
 			//std::cout << Config::startRange.at(i) << std::endl;
@@ -69,7 +175,7 @@ void determineRange() {
 	}
 	else {
 		// End Ranges
-		int firstEndRange = floor((Config::y / Config::x)); // Round down
+		double firstEndRange = floor((Config::y / Config::x)); // Round down
 		for (int i = 1; i <= Config::x; i++) {
 			if (i != Config::x) {
 				Config::endRange.push_back(firstEndRange * i);
@@ -81,7 +187,7 @@ void determineRange() {
 
 		//Start Ranges
 		int firstStartRange = 0;
-		Config::startRange.push_back(0);
+		Config::startRange.push_back(1); // Start always on 1
 		for (int i = 0; i < Config::endRange.size(); i++) {
 			Config::startRange.push_back(Config::endRange.at(i) + 1);
 		}
@@ -91,75 +197,57 @@ void determineRange() {
 
 void firstCombinationVariant() {
 
-	// Current Implementation:
-	// Printing Variant: Print Immediately
-	// Task Division Scheme: Straight division of search range.
-
 	std::cout << "[Current Setting: Variant #1]" << std::endl;
 	std::cout << "[Print Variant: Print-Immediately]" << std::endl;
 	std::cout << "[Task Division Scheme: Straight division of search range]" << std::endl;
 	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
 	Sleep(5000);
-	std::cout << "The code awakens!" << std::endl;
+	std::cout << "The code awakens!\n" << std::endl;
 
 	// This waits Thread 0 to complete for Thread 1 to run and so on.
 	// Also, all threads are created at the same time, it is just that it is not executed concurrently. This is becase of .join().
 	for (int i = 0; i < Config::x; i++ ) {
-
 		//Timestamp
-		time_t currTime;
-		char timeCreation[50];
-		struct tm datetime;
-		time(&currTime);
-		localtime_s(&datetime, &currTime);
-		strftime(timeCreation, sizeof(timeCreation), "%m/%d/%Y %I:%M:%S%p", &datetime);
-		std::string timeCreated = (std::string)timeCreation;
-
+		int timeCreated = primeSearcher.helperGetTime();
 		std::thread thread_obj(&SearchPrime::splitsFindPrimeNumbers, &primeSearcher, i, timeCreated, Config::startRange.at(i), Config::endRange.at(i), "immediate");
 		thread_obj.join();
 	} 
-
 }
 
 void secondCombinationVariant() {
 
-	// Current Implementation:
-	// Printing Variant: Wait-All-Threads
-	// Task Division Scheme: Straight division of search range.
-	
 	std::cout << "[Current Setting: Variant #2]" << std::endl;
 	std::cout << "[Print Variant: Wait-All-Threads]" << std::endl;
 	std::cout << "[Task Division Scheme: Straight division of search range]" << std::endl;
 	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
 	Sleep(5000);
 	std::cout << "The code awakens!" << std::endl;
+	std::cout << "Processing...\n" << std::endl;
 
 	for (int i = 0; i < Config::x; i++) {
-
 		//Timestamp
-		time_t currTime;
-		char timeCreation[50];
-		struct tm datetime;
-		time(&currTime);
-		localtime_s(&datetime, &currTime);
-		strftime(timeCreation, sizeof(timeCreation), "%m/%d/%Y %I:%M:%S%p", &datetime);
-		std::string timeCreated = (std::string)timeCreation;
-
+		int timeCreated = primeSearcher.helperGetTime();
 		childThreads.emplace_back(std::thread(&SearchPrime::splitsFindPrimeNumbers, &primeSearcher, i, timeCreated, Config::startRange.at(i), Config::endRange.at(i), "wait"));
 	}
-	std::cout << "\n" << Config::x << " threads has been created!" << std::endl;
 
-	std::cout << "Processing..." << std::endl;
+	// Store Thread Information
+	for (int i = 0; i < Config::x; i++) {
+		// Create Object
+		ThreadInfo threadInfo;
+
+		// Thread ID
+		threadInfo.threadID = i;
+
+		// Create array of array of strings
+		Config::threadStorage.push_back(threadInfo);
+	}
 
 	for (auto& th : childThreads) {
 		th.join();
 	}
-	std::cout << "\nAll threads finished!!" << std::endl;
-
-	Config& config = Config::getInstance();
-	for (int i = 0; i < config.printResult.size(); i++) {
-		std::cout << config.printResult.at(i) << std::endl;
-	}
+	
+	// Print Thread Information
+	helperPrintThreadInfo();
 }
 
 void thirdCombinationVariant() {
@@ -175,8 +263,9 @@ void thirdCombinationVariant() {
 	for (int i = 1; i <= Config::y; i++) {
 		Config::lookUpNumbers.push_back(i);
 	}
-	std::cout << "\nLook-up Tables: Initialized!" << std::endl;
+	std::cout << "Look-up Tables: Initialized!\n" << std::endl;
 
+	// Start Prime Test
 	primeSearcher.divisibleTester("immediate");
 }
 
@@ -193,9 +282,7 @@ void fourthCombinationVariant() {
 	for (int i = 1; i <= Config::y; i++) {
 		Config::lookUpNumbers.push_back(i);
 	}
-	std::cout << "\nLook-up Tables: Initialized!" << std::endl;
-
-	std::cout << "Processing...\n" << std::endl;
+	std::cout << "Look-up Tables: Initialized!\n" << std::endl;
 
 	// Store Thread Information
 	for (int i = 0; i < Config::x; i++) {
@@ -209,31 +296,13 @@ void fourthCombinationVariant() {
 		Config::threadStorage.push_back(threadInfo);
 	}
 
+	std::cout << "Processing...\n" << std::endl;
+
 	// Start Prime Test
 	primeSearcher.divisibleTester("wait");
 
-	// Initialize a variable to store the largest endTime
-	std::string largestEndTime = Config::threadStorage.at(0).endTime;
-
-	for (int i = 0; i < Config::x; i++) {
-		if (!Config::threadStorage.at(i).primeNumbers.empty()) {
-			std::cout << "[Thread #" << Config::threadStorage.at(i).threadID << "]" << Config::threadStorage.at(i).startTime << std::endl;
-			for (int b = 0; b < Config::threadStorage.at(i).primeNumbers.size(); b++) {
-				std::cout << Config::threadStorage.at(i).primeNumbers.at(b) << " ";
-			}
-			std::cout << "\n" << Config::threadStorage.at(i).endTime << "\n" << std::endl;
-		}
-		else {
-			std::cout << "[Thread #" << Config::threadStorage.at(i).threadID << "]" << Config::threadStorage.at(i).startTime << std::endl;
-			std::cout << "No stored prime numbers";
-			std::cout << "\n" << Config::threadStorage.at(i).endTime << "\n" << std::endl;
-		}
-
-		// To get the latest time ended of a thread (the last execution of it), we will compare all recorded execution of the thread and find the largest end time.
-		if (Config::threadStorage.at(i).endTime > largestEndTime) {
-			largestEndTime = Config::threadStorage.at(i).endTime;
-		}
-	}
+	// Print Thread Information
+	helperPrintThreadInfo();
 }
 
 int main() {

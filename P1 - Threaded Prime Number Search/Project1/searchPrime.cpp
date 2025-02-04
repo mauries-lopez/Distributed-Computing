@@ -17,96 +17,72 @@ std::mutex Config::lookUpNumbersMutex;
 std::mutex Config::lookUpNumbersFactorsMutex;
 std::mutex Config::factorCounterMutex;
 std::mutex Config::printMutex;
+std::mutex arrayPrimeNumbersLock;
 
 // Atomic Variable
 std::atomic<int> factorCounter(0);
 std::atomic<bool> primeFound(false);
 
-std::string helperGetTime(std::string type, int threadID) {
+int SearchPrime::helperGetTime() {
 
 	// Get the current time in milliseconds
 	auto now = std::chrono::system_clock::now();
 	auto duration = now.time_since_epoch();
 	auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 
-	// Last 3 digits
-	milliseconds = milliseconds % 1000; 
+	// Last 5 digits
+	milliseconds = milliseconds % 1000000; 
 
 	// Convert to string and append milliseconds
-	std::string timeStamp = std::to_string(milliseconds);
-
-	// Print the time with milliseconds
-	std::string threadEndInfo("[ENDED: " + timeStamp + " ms]");
-
-	std::string threadStartInfo("\n[Thread #" + std::to_string(threadID) + "]" + "[STARTED: " + timeStamp + " ms]");
-
-	if (type == "start") {
-		return threadStartInfo;
-	}
-	else if ( type == "end" ){
-		return threadEndInfo;
-	}
-
-	return "";
+	int timeStamp = milliseconds;
+	return timeStamp;
 }
 
 // Problem [1]: Search for prime numbers to a given y number
 // Search Prime Number Algorithm
-void SearchPrime::splitsFindPrimeNumbers(int threadID, std::string timeStamp, int startRange, int endRange, std::string printVariant) {
+void SearchPrime::splitsFindPrimeNumbers(int threadID, int threadStartInfo, int startRange, int endRange, std::string printVariant) {
 
 	std::string primeNumbers;
-	std::string threadStartInfo = helperGetTime("start", threadID);
+	int threadEndInfo = 0;
+	Config::threadStorage.at(threadID).startTime.push_back(threadStartInfo);
 
-	if (printVariant == "immediate") {
-		for (int a = startRange; a < endRange; a++) {
-			if (a > 1) {
-				int factorCounter = 0;
-				//Prime Conditions:
-				//It can only have 2 divisors: '1' and by itself.
-				for (int b = 1; b <= a; b++) {
-
-					//Using modulo, we can find the FACTORS of a number
-					//If the amount of factors a number has is greater than 2. Then, it is not a prime number.
-					if (a % b == 0) {
-						factorCounter++;
-					}
+	for (int a = startRange; a <= endRange; a++) {
+		if (a > 1) {
+			int factorCounter = 0;
+			//Prime Conditions:
+			//It can only have 2 divisors: '1' and by itself.
+			for (int b = 1; b <= a; b++) {
+				//Using modulo, we can find the FACTORS of a number
+				//If the amount of factors a number has is greater than 2. Then, it is not a prime number.
+				if (a % b == 0) {
+					factorCounter++;
 				}
-				if (factorCounter <= 2) {
-					primeNumbers.append(std::to_string(a) + " ");
-					std::string threadEndInfo = helperGetTime("end", threadID);
-					std::cout << threadStartInfo << threadEndInfo << " -> (" << a << ") ";
+			}
+			if (factorCounter <= 2) {
+				primeNumbers.append(std::to_string(a) + " ");
+				//std::string threadEndInfo = helperGetTime("end", threadID);
+				if (printVariant == "immediate") {
+					threadEndInfo = helperGetTime();
+					std::cout
+						<< "[Thread #" << threadID << "] (From "
+						<< threadStartInfo
+						<< "ms"
+						<< " to "
+						<< threadEndInfo
+						<< "ms): ["
+						<< a
+						<< "]"
+						<< std::endl;
+				}
+				else {
+					arrayPrimeNumbersLock.lock();
+					Config::threadStorage.at(threadID).primeNumbers.push_back(a);
+					arrayPrimeNumbersLock.unlock();
+					threadEndInfo = helperGetTime();
+					Config::threadStorage.at(threadID).endTime.push_back(threadEndInfo);
 				}
 			}
 		}
-	}
-	else if ( printVariant == "wait" ){
-		std::string threadEndInfo;
-		for (int a = startRange; a < endRange; a++) {
-			if (a > 1) {
-				int factorCounter = 0;
-				//Prime Conditions:
-				//It can only have 2 divisors: '1' and by itself.
-				for (int b = 1; b <= a; b++) {
-					//Using modulo, we can find the FACTORS of a number
-					//If the amount of factors a number has is greater than 2. Then, it is not a prime number.
-					if (a % b == 0) {
-						factorCounter++;
-					}
-				}
-				if (factorCounter <= 2) {
-					primeNumbers.append(std::to_string(a) + " ");
-					threadEndInfo = helperGetTime("end", threadID);
-				}
-			}
-		} 
-		Config& config = Config::getInstance();
-		std::string threadAllInfo;
-		threadAllInfo.append(threadStartInfo + "\n");
-		threadAllInfo.append(primeNumbers + "\n");
-		threadAllInfo.append(threadEndInfo);
-		Config::printMutex.lock();
-		config.printResult.push_back(threadAllInfo);
-		Config::printMutex.unlock();
 	}
 }
 
@@ -166,9 +142,7 @@ void SearchPrime::divisibleTester(std::string printVariant) {
 		for (int i = 0; i < Config::x; i++) {
 			// Each thread will have its own information (e.g. thread ID, start time, end time, prime numbers)
 			if (printVariant == "wait") {
-				if (i == Config::threadStorage.at(i).threadID) {
-					Config::threadStorage.at(i).startTime = helperGetTime("start", i);
-				}
+				Config::threadStorage.at(i).startTime.push_back(helperGetTime());
 			}
 			childThreads.emplace_back(std::thread(&SearchPrime::testForDivisible, &primeSearcher, i, num, printVariant));
 		}
@@ -185,9 +159,9 @@ void SearchPrime::testForDivisible(int threadID, int num, std::string printVaria
 
 	int factor = 0;
 	std::string primeNumbers;
-	std::string threadStartInfo = helperGetTime("start", threadID);
+	//std::string threadStartInfo = helperGetTime("start", threadID);
+	int threadStartInfo = helperGetTime();
 	std::string threadAllInfo;
-	std::mutex arrayPrimeNumbersLock;
 
 	if (num > 1) {
 		while (true) {
@@ -216,7 +190,8 @@ void SearchPrime::testForDivisible(int threadID, int num, std::string printVaria
 	if (factorCounter.load() == 2 && factorCounter.load() != 0 ) {
 		primeFound.store(true);
 		if (printVariant == "immediate") {
-			std::string threadEndInfo = helperGetTime("end", threadID);
+			//std::string threadEndInfo = helperGetTime("end", threadID);
+			int threadEndInfo = helperGetTime();
 			// Upon observation, usually the first thread who have started the divisiblity testing on the number prints the output.
 			// The way how the algorithm works, it might be because the first threads always gets the lowest number to try on 'num'.
 			// For example: Test '3' if its prime. 3 threads
@@ -225,13 +200,29 @@ void SearchPrime::testForDivisible(int threadID, int num, std::string printVaria
 			// [Thread #2] will test 3 on 3
 			// Note: Though, the algorithm that I created works like that, it still dependent on how fast the CPU cores are being used.
 			// I also observed that when running the code for variants 3-4, I have high CPU usage.
-			std::cout << threadStartInfo << threadEndInfo << " -> (" << num << ") ";
+			std::cout
+				<< "[Thread #" << threadID << "] (From "
+				<< threadStartInfo
+				<< "ms"
+				<< " to "
+				<< threadEndInfo
+				<< "ms): ["
+				<< num 
+				<< "]"
+				<< std::endl;
 		} else if ( printVariant == "wait") {
 			arrayPrimeNumbersLock.lock();
 			Config::threadStorage.at(threadID).primeNumbers.push_back(num);
 			arrayPrimeNumbersLock.unlock();
-			std::string threadEndInfo = helperGetTime("end", threadID);
-			Config::threadStorage.at(threadID).endTime = threadEndInfo;
+			int threadEndInfo = helperGetTime();
+			Config::threadStorage.at(threadID).endTime.push_back(threadEndInfo);
+		}
+	}
+	else {
+		// This is necessary for printing after all threads have finished, as it requires information from each thread to determine when it was last executed.
+		if (printVariant == "wait") {
+			int threadEndInfo = helperGetTime();
+			Config::threadStorage.at(threadID).endTime.push_back(threadEndInfo);
 		}
 	}
 	Config::printMutex.unlock();

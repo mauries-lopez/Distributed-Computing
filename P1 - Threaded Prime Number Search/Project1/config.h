@@ -6,9 +6,9 @@
 
 struct ThreadInfo {
 	int threadID;
-	std::string startTime;
+	std::vector<int> startTime;
 	std::vector<int> primeNumbers;  // Vector to store prime numbers
-	std::string endTime;
+	std::vector<int> endTime;
 };
 
 class Config {
