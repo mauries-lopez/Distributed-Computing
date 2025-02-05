@@ -21,30 +21,31 @@ SearchPrime primeSearcher;
 std::vector<std::thread> childThreads;
 
 // Helper function for validation test
-void helperValidationTest(std::string type, std::string value) {
+void helperValidationTest(std::string type, std::string parameter, std::string value) {
 
 	// 'General' validation list:
 	// 1. Check if one is missing. If atleast one missing, give error. Else, continue
 	// 2. Check if config file is empty
 	// 3. If all values are in maximum amount of int
 	// 4. Duplicated entries (e.g. x 100 x 200)
+	// 5. 'x 1' 'y 1' [/]
 
-	// 'x|y' validation list:
+	// 'x|y|variant' validation list:
 	// 1. Number only [/]
 	// 2. No texts (e.g. no special characters) [/]
 	// 3. Empty value [/]
 	// 4. Negative values [/]
-	// 5. Value range [?]
+	// 5. Value range [/]
 	// 6. Decimal [/]
 	// 7. Multiple values (e.g. 'x 1 100') [?]
 
 	if (type == "number") {
-		std::string tempX = value;
+		std::string tempVal = value;
 		bool isPassedStringCheck = false;
 		bool isPassedNumberCheck = false;
 		while (isPassedStringCheck == false && isPassedNumberCheck == false) {
 			// [First Check: String-related validation && Decimal (due to '.' character is checked) && Negative (due to '-' character is checked)]
-			for (char c : tempX) {
+			for (char c : tempVal) {
 				if (!std::isdigit(c)) {
 					isPassedStringCheck = false;
 					break;
@@ -54,31 +55,85 @@ void helperValidationTest(std::string type, std::string value) {
 				}
 			}
 			if (isPassedStringCheck == false) {
-				std::cout << "[ERROR: Characters are not allowed. Enter numerical values only.]" << std::endl;
-				std::cout << "Enter 'x' value: ";
-				std::cin >> tempX;
+				if (parameter == "x") {
+					std::cout << "[ERROR: Characters (e.g. '-', '.' are included) are not allowed in 'x'. Enter numerical values only.]" << std::endl;
+					std::cout << "Enter 'x' value: ";
+				}
+				else if (parameter == "y"){
+					std::cout << "[ERROR: Characters (e.g. '-', '.' are included) are not allowed in 'y'. Enter numerical values only.]" << std::endl;
+					std::cout << "Enter 'y' value: ";
+				}
+				else if (parameter == "variant") {
+					std::cout << "[ERROR: Characters (e.g. '-', '.' are included) are not allowed in 'variant'. Enter numerical values only.]" << std::endl;
+					std::cout << "Enter 'variant' value: ";
+				}
+				std::cin >> tempVal;
 			}
 			// [Second Check: Number-related validation]
 			if (isPassedStringCheck == true && isPassedNumberCheck == false) {
 				//Convert to integer value
-				std::string tempInt = std::string(tempX);
-				int tempXInt = std::stoi(tempInt);
+				std::string tempInt = std::string(tempVal);
+				int tempValInt = std::stoi(tempInt);
 				bool isPassedRangeCheck = false;
-				// From 1 to y											// CONTINUE HERE!!!
-				if (tempXInt >= 1 && tempXInt <= Config::y){
-					isPassedRangeCheck = true;
-					//Temporary
-					isPassedNumberCheck = true;
-					Config::x = tempXInt;
+				if (tempValInt >= 1 && tempValInt <= INT_MAX){
+					if (parameter == "x") {
+						isPassedRangeCheck = true;
+						isPassedNumberCheck = true;
+						Config::x = tempValInt;
+					}
+					else if (parameter == "y") {
+						isPassedRangeCheck = true;
+						isPassedNumberCheck = true;
+						Config::y = tempValInt;
+					}
+					else if (parameter == "variant") {
+						if (tempValInt >= 1 && tempValInt <= 4) {
+							isPassedRangeCheck = true;
+							isPassedNumberCheck = true;
+							Config::variant = tempValInt;
+						}
+						else {
+							//Temporary tempValString
+							std::string tempValString;
+							std::cout << "[ERROR: Invalid 'variant' value. Enter a number between 1 and 4 only.]" << std::endl;
+							std::cout << "Enter 'variant' value: ";
+							std::cin >> tempValString;
+							
+							//Reset all booleans to check all validations again
+							isPassedStringCheck = false;
+							tempVal = tempValString; //Return to string validation
+						}
+					}
 				}
 				else {
-					std::cout << "[ERROR: Invalid number. Enter number greater or equal to 1.]" << std::endl;
-					std::cout << "Enter 'x' value: ";
-					std::cin >> tempXInt;
+					//Temporary tempValString
+					std::string tempValString;
+
+					if (parameter == "x") {
+						std::cout << "[ERROR: Invalid 'x' value. Enter number greater or equal to 1.]" << std::endl;
+						std::cout << "Enter 'x' value: ";
+					}
+					else if (parameter == "y"){
+						std::cout << "[ERROR: Invalid 'y' value. Enter number greater or equal to 1.]" << std::endl;
+						std::cout << "Enter 'y' value: ";
+					}
+					else if (parameter == "variant") {
+						std::cout << "[ERROR: Invalid 'variant' value. Enter a number between 1 and 4 only.]" << std::endl;
+						std::cout << "Enter 'variant' value: ";
+					}
+					std::cin >> tempValString;
+
+					//Reset all booleans to check all validations again
+					isPassedStringCheck = false;
+					tempVal = tempValString; //Return to string validation
 				}
 			}
 		}
 	}
+	else if (type == "general") {
+
+	}
+	system("cls");
 }
 
 void helperPrintThreadInfo() {
@@ -109,9 +164,7 @@ void helperPrintThreadInfo() {
 			}
 
 			//Next Thread
-			std::cout << "\n\n";
-			//std::cout << "\n" << Config::threadStorage.at(i).endTime.at(0) << "ms" << "\n" << std::endl;
-		}
+			std::cout << "\n\n";		}
 		else {
 			std::cout
 				<< "[Thread #" << Config::threadStorage.at(i).threadID << "] (From "
@@ -121,7 +174,7 @@ void helperPrintThreadInfo() {
 				<< Config::threadStorage.at(i).endTime.at(0)
 				<< "ms)"
 				<< std::endl;
-			std::cout << "No stored prime numbers";
+			std::cout << "No prime numbers have been assigned in the thread";
 			//Next Thread
 			std::cout << "\n\n";
 		}
@@ -140,14 +193,13 @@ void getConfigValues() {
 		std::istringstream stream(parameter);
 		stream >> parameter >> value;
 		if (parameter == "x") {
-			helperValidationTest("number", value);
+			helperValidationTest("number", parameter, value);
 		}
 		else if (parameter == "y") {
-			Config::y = std::stoi(value);
-			//std::cout << config.y << std::endl;
+			helperValidationTest("number", parameter, value);
 		}
 		else if (parameter == "variant") {
-			Config::variant = std::stoi(value);;
+			helperValidationTest("number", parameter, value);
 		}
 	}
 	input.close();
@@ -192,7 +244,6 @@ void determineRange() {
 			Config::startRange.push_back(Config::endRange.at(i) + 1);
 		}
 	}
-
 }
 
 void firstCombinationVariant() {
@@ -200,6 +251,7 @@ void firstCombinationVariant() {
 	std::cout << "[Current Setting: Variant #1]" << std::endl;
 	std::cout << "[Print Variant: Print-Immediately]" << std::endl;
 	std::cout << "[Task Division Scheme: Straight division of search range]" << std::endl;
+	std::cout << "[x: " << Config::x << "][y: " << Config::y << "][variant: " << Config::variant << "]" << std::endl;
 	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
 	Sleep(5000);
 	std::cout << "The code awakens!\n" << std::endl;
@@ -219,16 +271,11 @@ void secondCombinationVariant() {
 	std::cout << "[Current Setting: Variant #2]" << std::endl;
 	std::cout << "[Print Variant: Wait-All-Threads]" << std::endl;
 	std::cout << "[Task Division Scheme: Straight division of search range]" << std::endl;
+	std::cout << "[x: " << Config::x << "][y: " << Config::y << "][variant: " << Config::variant << "]" << std::endl;
 	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
 	Sleep(5000);
 	std::cout << "The code awakens!" << std::endl;
 	std::cout << "Processing...\n" << std::endl;
-
-	for (int i = 0; i < Config::x; i++) {
-		//Timestamp
-		int timeCreated = primeSearcher.helperGetTime();
-		childThreads.emplace_back(std::thread(&SearchPrime::splitsFindPrimeNumbers, &primeSearcher, i, timeCreated, Config::startRange.at(i), Config::endRange.at(i), "wait"));
-	}
 
 	// Store Thread Information
 	for (int i = 0; i < Config::x; i++) {
@@ -240,6 +287,12 @@ void secondCombinationVariant() {
 
 		// Create array of array of strings
 		Config::threadStorage.push_back(threadInfo);
+	}
+
+	for (int i = 0; i < Config::x; i++) {
+		//Timestamp
+		int timeCreated = primeSearcher.helperGetTime();
+		childThreads.emplace_back(std::thread(&SearchPrime::splitsFindPrimeNumbers, &primeSearcher, i, timeCreated, Config::startRange.at(i), Config::endRange.at(i), "wait"));
 	}
 
 	for (auto& th : childThreads) {
@@ -255,6 +308,7 @@ void thirdCombinationVariant() {
 	std::cout << "[Current Setting: Variant #3]" << std::endl;
 	std::cout << "[Print Variant: Print-Immediately]" << std::endl;
 	std::cout << "[Task Division Scheme: The search is linear but the threads are for divisibility testing of individual numbers.]" << std::endl;
+	std::cout << "[x: " << Config::x << "][y: " << Config::y << "][variant: " << Config::variant << "]" << std::endl;
 	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
 	Sleep(5000);
 	std::cout << "The code awakens!" << std::endl;
@@ -274,6 +328,7 @@ void fourthCombinationVariant() {
 	std::cout << "[Current Setting: Variant #4]" << std::endl;
 	std::cout << "[Print Variant: Wait-All-Threads]" << std::endl;
 	std::cout << "[Task Division Scheme: The search is linear but the threads are for divisibility testing of individual numbers.]" << std::endl;
+	std::cout << "[x: " << Config::x << "][y: " << Config::y << "][variant: " << Config::variant << "]" << std::endl;
 	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
 	Sleep(5000);
 	std::cout << "The code awakens!" << std::endl;

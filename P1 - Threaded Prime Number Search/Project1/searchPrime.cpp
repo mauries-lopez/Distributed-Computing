@@ -30,7 +30,7 @@ int SearchPrime::helperGetTime() {
 	auto duration = now.time_since_epoch();
 	auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
 
-	// Last 5 digits
+	// Last 4 digits
 	milliseconds = milliseconds % 1000000; 
 
 	// Convert to string and append milliseconds
@@ -42,9 +42,12 @@ int SearchPrime::helperGetTime() {
 // Search Prime Number Algorithm
 void SearchPrime::splitsFindPrimeNumbers(int threadID, int threadStartInfo, int startRange, int endRange, std::string printVariant) {
 
-	std::string primeNumbers;
+	std::vector<int> primeNumbers;
 	int threadEndInfo = 0;
-	Config::threadStorage.at(threadID).startTime.push_back(threadStartInfo);
+
+	if (printVariant == "wait") {
+		Config::threadStorage.at(threadID).startTime.push_back(threadStartInfo);
+	}
 
 	for (int a = startRange; a <= endRange; a++) {
 		if (a > 1) {
@@ -58,8 +61,8 @@ void SearchPrime::splitsFindPrimeNumbers(int threadID, int threadStartInfo, int 
 					factorCounter++;
 				}
 			}
-			if (factorCounter <= 2) {
-				primeNumbers.append(std::to_string(a) + " ");
+			if (factorCounter <= 2) { 
+				primeNumbers.push_back(a);
 				//std::string threadEndInfo = helperGetTime("end", threadID);
 				if (printVariant == "immediate") {
 					threadEndInfo = helperGetTime();
@@ -74,15 +77,32 @@ void SearchPrime::splitsFindPrimeNumbers(int threadID, int threadStartInfo, int 
 						<< "]"
 						<< std::endl;
 				}
-				else {
-					arrayPrimeNumbersLock.lock();
-					Config::threadStorage.at(threadID).primeNumbers.push_back(a);
-					arrayPrimeNumbersLock.unlock();
-					threadEndInfo = helperGetTime();
-					Config::threadStorage.at(threadID).endTime.push_back(threadEndInfo);
-				}
 			}
 		}
+		else {
+			// If statement is needed because if it does not include this, it will print immediately on wait-for-all threads mode.
+			if (printVariant == "immediate" && a < 1) {
+				threadEndInfo = helperGetTime();
+				std::cout
+					<< "[Thread #" << threadID << "] (From "
+					<< threadStartInfo
+					<< "ms"
+					<< " to "
+					<< threadEndInfo
+					<< "ms): ["
+					<< "No prime numbers have been assigned in the thread"
+					<< "]"
+					<< std::endl;
+			}
+		}
+	}
+	//For wait-for-all print, wait for the thread to finish and store all prime numbers it found in its respective thread information.
+	if (printVariant == "wait") {
+		for (int i = 0; i < primeNumbers.size(); i++) {
+			Config::threadStorage.at(threadID).primeNumbers.push_back(primeNumbers.at(i));
+		}
+		threadEndInfo = helperGetTime();
+		Config::threadStorage.at(threadID).endTime.push_back(threadEndInfo);
 	}
 }
 
@@ -109,13 +129,12 @@ void SearchPrime::divisibleTester(std::string printVariant) {
 	// [WEAKNESS OF THE ALGORITHM]
 	// Since the threads are created "at the same time" or 0.0000001... difference, all of these treads checks their respective number to (num) if its divisible at the "at the same time".
 	// In result, even 2 threads have found that (num) is prime, other threads will continue checking/test.
-	// To mitigate this, line 192 is implemented as one of the base cases of the while loop.. Assuming it can stop other threads that are yet to be created.
+	// To mitigate this, line 188 is implemented as one of the base cases of the while loop.. Assuming it can stop other threads that are yet to be created.
 
 	int num = 0;
 	SearchPrime primeSearcher;
 
 	while (!Config::lookUpNumbers.empty()) {
-
 		// Mutex is needed here since it is possible that 2 or more threads can remove the same number in lookUpNumbers. 
 		// We want mutex to restrict only 1 thread to modify it at a time.
 		Config::lookUpNumbersMutex.lock();
@@ -190,7 +209,6 @@ void SearchPrime::testForDivisible(int threadID, int num, std::string printVaria
 	if (factorCounter.load() == 2 && factorCounter.load() != 0 ) {
 		primeFound.store(true);
 		if (printVariant == "immediate") {
-			//std::string threadEndInfo = helperGetTime("end", threadID);
 			int threadEndInfo = helperGetTime();
 			// Upon observation, usually the first thread who have started the divisiblity testing on the number prints the output.
 			// The way how the algorithm works, it might be because the first threads always gets the lowest number to try on 'num'.
