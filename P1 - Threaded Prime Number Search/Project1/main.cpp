@@ -14,30 +14,20 @@
 std::vector<int> Config::startRange;
 std::vector<int> Config::endRange;
 std::vector<int> Config::lookUpNumbers;
-
 int Config::variant = 0;
-
 SearchPrime primeSearcher;
 std::vector<std::thread> childThreads;
 
 // Helper function for validation test
 void helperValidationTest(std::string type, std::string parameter, std::string value) {
 
-	// 'General' validation list:
-	// 1. Check if one is missing. If atleast one missing, give error. Else, continue
-	// 2. Check if config file is empty
-	// 3. If all values are in maximum amount of int
-	// 4. Duplicated entries (e.g. x 100 x 200)
-	// 5. 'x 1' 'y 1' [/]
-
 	// 'x|y|variant' validation list:
-	// 1. Number only [/]
-	// 2. No texts (e.g. no special characters) [/]
-	// 3. Empty value [/]
-	// 4. Negative values [/]
-	// 5. Value range [/]
-	// 6. Decimal [/]
-	// 7. Multiple values (e.g. 'x 1 100') [?]
+	// - Number only [/]
+	// - No texts (e.g. no special characters) [/]
+	// - Empty value [/]
+	// - Negative values [/]
+	// - Value range [/]
+	// - Decimal [/]
 
 	if (type == "number") {
 		std::string tempVal = value;
@@ -81,9 +71,10 @@ void helperValidationTest(std::string type, std::string parameter, std::string v
 						isPassedNumberCheck = true;
 						Config::x = tempValInt;
 					}
-					else if (parameter == "y") {
+					else if (parameter == "y" && tempValInt > 1) {
 						isPassedRangeCheck = true;
 						isPassedNumberCheck = true;
+						//isPassedAllChecksForY = true;
 						Config::y = tempValInt;
 					}
 					else if (parameter == "variant") {
@@ -104,17 +95,26 @@ void helperValidationTest(std::string type, std::string parameter, std::string v
 							tempVal = tempValString; //Return to string validation
 						}
 					}
+					else if (parameter == "y" && tempValInt <= 1) {
+						//Temporary tempValString
+						std::string tempValString;
+						//Reset all booleans to check all validations again
+						std::cout << "[ERROR: Invalid 'y' value. Enter number greater than 1.]" << std::endl;
+						std::cout << "Enter 'y' value: ";
+						std::cin >> tempValString;
+						isPassedStringCheck = false;
+						tempVal = tempValString; //Return to string validation
+					}
 				}
 				else {
 					//Temporary tempValString
 					std::string tempValString;
-
 					if (parameter == "x") {
 						std::cout << "[ERROR: Invalid 'x' value. Enter number greater or equal to 1.]" << std::endl;
 						std::cout << "Enter 'x' value: ";
 					}
 					else if (parameter == "y"){
-						std::cout << "[ERROR: Invalid 'y' value. Enter number greater or equal to 1.]" << std::endl;
+						std::cout << "[ERROR: Invalid 'y' value. Enter number greater than 1.]" << std::endl;
 						std::cout << "Enter 'y' value: ";
 					}
 					else if (parameter == "variant") {
@@ -122,7 +122,6 @@ void helperValidationTest(std::string type, std::string parameter, std::string v
 						std::cout << "Enter 'variant' value: ";
 					}
 					std::cin >> tempValString;
-
 					//Reset all booleans to check all validations again
 					isPassedStringCheck = false;
 					tempVal = tempValString; //Return to string validation
@@ -130,10 +129,6 @@ void helperValidationTest(std::string type, std::string parameter, std::string v
 			}
 		}
 	}
-	else if (type == "general") {
-
-	}
-	system("cls");
 }
 
 void helperPrintThreadInfo() {
@@ -183,26 +178,83 @@ void helperPrintThreadInfo() {
 
 // Problem [2]: The values x and y should be configurable in a separate config file. x: number of threads, y: number to use
 // I/O File
-void getConfigValues() {
+bool getConfigValues() {
+
+	// 'General' validation list:
+	// - Check if one is missing. If atleast one missing, give error. Else, continue [/]
+	// - Check if config file is empty [/]
+	// - Duplicated entries (e.g. x 100 x 200) [/]
+	// - 'x 1' 'y 1' [/]
+	// - config.txt does not exists [/]
+
+	//Bool for each parameter
+	bool paramX = false;
+	bool paramY = false;
+	bool paramVar = false;
+	bool isAllFilled = false;
+
+	std::string parameter, value;
 
 	//Read Config.txt
 	std::ifstream input("config.txt");
-	std::string parameter, value;
+	if (input.is_open()) {
+		while (std::getline(input, parameter)) {
+			std::istringstream stream(parameter);
+			stream >> parameter >> value;
+			if (parameter == "x" && paramX == false) {
+				helperValidationTest("number", parameter, value);
+				paramX = true;
+			}
+			else if (parameter == "y" && paramY == false) {
+				helperValidationTest("number", parameter, value);
+				paramY = true;
+			}
+			else if (parameter == "variant" && paramVar == false) {
+				helperValidationTest("number", parameter, value);
+				paramVar = true;
+			}
+		}
 
-	while (std::getline(input, parameter)) {
-		std::istringstream stream(parameter);
-		stream >> parameter >> value;
-		if (parameter == "x") {
-			helperValidationTest("number", parameter, value);
+		// Check if all parameters are filled
+		if (paramX == true && paramY == true && paramVar == true) {
+			isAllFilled = true;
 		}
-		else if (parameter == "y") {
-			helperValidationTest("number", parameter, value);
+
+		// If one of the parameters is missing.
+		while (isAllFilled == false) {
+			std::string tempValString;
+			if (paramX == false) {
+				std::cout << "[ERROR: 'x' parameter does not exists.]" << std::endl;
+				std::cout << "Enter 'x' value: ";
+				std::cin >> tempValString;
+				helperValidationTest("number", "x", tempValString);
+				paramX = true;
+			}
+			else if (paramY == false) {
+				std::cout << "[ERROR: 'y' parameter does not exists.]" << std::endl;
+				std::cout << "Enter 'y' value: ";
+				std::cin >> tempValString;
+				helperValidationTest("number", "y", tempValString);
+				paramY = true;
+			}
+			else if (paramVar == false) {
+				std::cout << "[ERROR: 'variant' parameter does not exists.]" << std::endl;
+				std::cout << "Enter 'variant' value: ";
+				std::cin >> tempValString;
+				helperValidationTest("number", "variant", tempValString);
+				paramVar = true;
+			}
+			else {
+				isAllFilled = true;
+			}
 		}
-		else if (parameter == "variant") {
-			helperValidationTest("number", parameter, value);
-		}
+		input.close();
+		return true;
 	}
-	input.close();
+	else {
+		std::cout << "[ERROR: config.txt does not exists. Create a config.txt file.]" << std::endl;
+		return false;
+	}
 }
 
 // Problem[3]: Determine the range of each thread to search
@@ -251,10 +303,7 @@ void firstCombinationVariant() {
 	std::cout << "[Current Setting: Variant #1]" << std::endl;
 	std::cout << "[Print Variant: Print-Immediately]" << std::endl;
 	std::cout << "[Task Division Scheme: Straight division of search range]" << std::endl;
-	std::cout << "[x: " << Config::x << "][y: " << Config::y << "][variant: " << Config::variant << "]" << std::endl;
-	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
-	Sleep(5000);
-	std::cout << "The code awakens!\n" << std::endl;
+	std::cout << "[x: " << Config::x << "][y: " << Config::y << "][variant: " << Config::variant << "]\n" << std::endl;
 
 	// This waits Thread 0 to complete for Thread 1 to run and so on.
 	// Also, all threads are created at the same time, it is just that it is not executed concurrently. This is becase of .join().
@@ -271,11 +320,7 @@ void secondCombinationVariant() {
 	std::cout << "[Current Setting: Variant #2]" << std::endl;
 	std::cout << "[Print Variant: Wait-All-Threads]" << std::endl;
 	std::cout << "[Task Division Scheme: Straight division of search range]" << std::endl;
-	std::cout << "[x: " << Config::x << "][y: " << Config::y << "][variant: " << Config::variant << "]" << std::endl;
-	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
-	Sleep(5000);
-	std::cout << "The code awakens!" << std::endl;
-	std::cout << "Processing...\n" << std::endl;
+	std::cout << "[x: " << Config::x << "][y: " << Config::y << "][variant: " << Config::variant << "]\n" << std::endl;
 
 	// Store Thread Information
 	for (int i = 0; i < Config::x; i++) {
@@ -308,16 +353,12 @@ void thirdCombinationVariant() {
 	std::cout << "[Current Setting: Variant #3]" << std::endl;
 	std::cout << "[Print Variant: Print-Immediately]" << std::endl;
 	std::cout << "[Task Division Scheme: The search is linear but the threads are for divisibility testing of individual numbers.]" << std::endl;
-	std::cout << "[x: " << Config::x << "][y: " << Config::y << "][variant: " << Config::variant << "]" << std::endl;
-	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
-	Sleep(5000);
-	std::cout << "The code awakens!" << std::endl;
+	std::cout << "[x: " << Config::x << "][y: " << Config::y << "][variant: " << Config::variant << "]\n" << std::endl;
 
 	// Create a look-up table
 	for (int i = 1; i <= Config::y; i++) {
 		Config::lookUpNumbers.push_back(i);
 	}
-	std::cout << "Look-up Tables: Initialized!\n" << std::endl;
 
 	// Start Prime Test
 	primeSearcher.divisibleTester("immediate");
@@ -328,16 +369,12 @@ void fourthCombinationVariant() {
 	std::cout << "[Current Setting: Variant #4]" << std::endl;
 	std::cout << "[Print Variant: Wait-All-Threads]" << std::endl;
 	std::cout << "[Task Division Scheme: The search is linear but the threads are for divisibility testing of individual numbers.]" << std::endl;
-	std::cout << "[x: " << Config::x << "][y: " << Config::y << "][variant: " << Config::variant << "]" << std::endl;
-	std::cout << "\nThe code pauses for 5 seconds." << std::endl;
-	Sleep(5000);
-	std::cout << "The code awakens!" << std::endl;
+	std::cout << "[x: " << Config::x << "][y: " << Config::y << "][variant: " << Config::variant << "]\n" << std::endl;
 
 	// Create a look-up table
 	for (int i = 1; i <= Config::y; i++) {
 		Config::lookUpNumbers.push_back(i);
 	}
-	std::cout << "Look-up Tables: Initialized!\n" << std::endl;
 
 	// Store Thread Information
 	for (int i = 0; i < Config::x; i++) {
@@ -351,8 +388,6 @@ void fourthCombinationVariant() {
 		Config::threadStorage.push_back(threadInfo);
 	}
 
-	std::cout << "Processing...\n" << std::endl;
-
 	// Start Prime Test
 	primeSearcher.divisibleTester("wait");
 
@@ -362,25 +397,34 @@ void fourthCombinationVariant() {
 
 int main() {
 
-	//Initialize
-	getConfigValues();
-	determineRange();
+	int timeStart = primeSearcher.helperGetTime();
+	std::cout << "[System] Time Started (" << timeStart << "ms)" << std::endl;
 
-	if (Config::variant == 1) {
-		firstCombinationVariant();
+	bool isConfigPrepared = getConfigValues();
+	if (isConfigPrepared == true) {
+		determineRange();
+		if (Config::variant == 1) {
+			firstCombinationVariant();
+		}
+		else if (Config::variant == 2) {
+			secondCombinationVariant();
+		}
+		else if (Config::variant == 3) {
+			thirdCombinationVariant();
+		}
+		else if (Config::variant == 4) {
+			fourthCombinationVariant();
+		}
+		else {
+			std::cout << "Choose between variants 1 to 4 only." << std::endl;
+		}
 	}
-	else if (Config::variant == 2) {
-		secondCombinationVariant();
-	}
-	else if (Config::variant == 3) {
-		thirdCombinationVariant();
-	}
-	else if (Config::variant == 4) {
-		fourthCombinationVariant();
-	}
-	else {
-		std::cout << "Choose between [1 to 4] only." << std::endl;
-	}
+
+	int timeEnded = primeSearcher.helperGetTime();
+	std::cout << "\n[System] Time Ended (" << timeEnded << "ms)" << std::endl;
+
+	int overallMs = timeEnded - timeStart;
+	std::cout << "[System] Time Diff. (" << overallMs << "ms)" << std::endl;
 
 	return 0;
 }

@@ -34,7 +34,7 @@ int SearchPrime::helperGetTime() {
 	milliseconds = milliseconds % 1000000; 
 
 	// Convert to string and append milliseconds
-	int timeStamp = milliseconds;
+	long long timeStamp = milliseconds;
 	return timeStamp;
 }
 
@@ -129,7 +129,7 @@ void SearchPrime::divisibleTester(std::string printVariant) {
 	// [WEAKNESS OF THE ALGORITHM]
 	// Since the threads are created "at the same time" or 0.0000001... difference, all of these treads checks their respective number to (num) if its divisible at the "at the same time".
 	// In result, even 2 threads have found that (num) is prime, other threads will continue checking/test.
-	// To mitigate this, line 188 is implemented as one of the base cases of the while loop.. Assuming it can stop other threads that are yet to be created.
+	// To mitigate this, line 187 is implemented as one of the base cases of the while loop.. Assuming it can stop other threads that are yet to be created.
 
 	int num = 0;
 	SearchPrime primeSearcher;
@@ -184,11 +184,9 @@ void SearchPrime::testForDivisible(int threadID, int num, std::string printVaria
 
 	if (num > 1) {
 		while (true) {
-
 			if (primeFound.load()) {
 				break; // Exit if a prime has been found
 			}
-
 			Config::lookUpNumbersFactorsMutex.lock();
 			if (Config::lookUpNumbersFactors.empty()) {
 				Config::lookUpNumbersFactorsMutex.unlock();
