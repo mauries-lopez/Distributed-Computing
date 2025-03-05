@@ -2,59 +2,73 @@
 #include "threadPool.h"
 #include "config.h"
 #include "playerConfig.h"
+#include "dungeonConfig.h"
 
 #include <string>
 #include <sstream>
 #include <iostream>
 #include <thread>
+#include <random>
 
 std::vector<PartyObject> Party::partyList;
 std::mutex Party::partyListMutex;
+int Party::doneCount;
+std::mutex Dungeon::dungeonListMutex;
 
 void Party::deployParties() {
+
 	ThreadPool threadPool;
 	threadPool.start(); // Create the number of dungeons
     int i = 0;
+    int dungeonListSize = Dungeon::dungeonList.size();
+    int x = 0;
+    int partyListSize = Party::partyList.size();
 
-    std::cout << "Party Created: " << Party::partyList.size() << std::endl;
+    while (true) {
 
-    // CONTINUE HERE!!!!
-    // PROBLEM: Dungeon is still broken. 2 dungeons and 3 parties, ung isang extrang party hindi na makapasok sa dungeon.
-    // FIX?: Dungeon status is not yet implemented. If a dungeon is found available, give task there. Else, wait.
+        if (Party::doneCount == partyListSize) {
+            break;
+        }
 
-    while (!Party::partyList.empty()) {
-        // Capture the first party in the list by value to avoid race conditions
-        PartyObject currentParty = Party::partyList.front();
+        if (i >= dungeonListSize) {
+            i = 0;
+        }
 
-        // Assign the task to the thread pool, capture currentParty by value
-        threadPool.giveNewTask([currentParty](int threadID, int dungeonTime) {
-            int originalTime = dungeonTime;
-            do {
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                std::cout << "[Dungeon #" << threadID << "] Duration: " << dungeonTime << "/" << originalTime << " Taken by Party#:" << currentParty.partyID << std::endl;
-                dungeonTime--;
-            } while (dungeonTime != 0);
-            });
+        if (x >= partyListSize) {
+            x = 0;
+        }
 
-        // Safely erase the first element of the list
-        partyListMutex.lock();
-        Party::partyList.erase(Party::partyList.begin());
-        partyListMutex.unlock();
+        if (Party::partyList.at(x).status == "queued") {
+            if (Dungeon::dungeonList.at(i).status == "empty") {
+                Party::partyList.at(x).dungeonID = i;
+                Party::partyList.at(x).status = "active";
+                Dungeon::dungeonList.at(i).status = "active";
+                // Assign the task to the thread pool, capture currentParty by value
+                threadPool.giveNewTask([x, i](int threadID) {
+                    int originalTime = Party::partyList.at(x).timeInDungeon;
+                    int dungeonTime = 0;
+                    //Dungeon Life Time
+                    do {
+                        Dungeon::dungeonList.at(i).curDungeonTime = dungeonTime;
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        dungeonTime++;
+                        Dungeon::dungeonList.at(i).curDungeonTime = dungeonTime;
+                        Dungeon::dungeonList.at(i).totalTimeServed++;
+                        //std::cout << "[Dungeon #" << threadID << "] Duration: " << dungeonTime << "/" << originalTime << " Taken by Party#: " << Party::partyList.at(x).partyID  << std::endl;
+                    } while (dungeonTime < originalTime);
+                    Dungeon::dungeonList.at(i).status = "empty";
+                    Party::doneCount++;
+                    Dungeon::dungeonList.at(i).numServed++;
+                    Party::partyList.at(x).status = "finished";
+                 });
+                x++;
+            }
+        }
+        i++;
     }
 
     threadPool.busy();
     threadPool.stop();
-
-	for (int i = 0; i < Party::partyList.size(); i++) {
-		for (int x = 0; x < 5; x++) {
-			std::cout << "Party#" << Party::partyList.at(i).partyID << " PlayerID:" << Party::partyList.at(i).members.at(x).playerId << " Class:" << Party::partyList.at(i).members.at(x).classType << std::endl;
-		}
-	}
-
-    std::cout << "Tank Player List Size: " << Player::tankPlayerList.size() << std::endl;
-    std::cout << "Healer Player List Size: " << Player::healerPlayerList.size() << std::endl;
-    std::cout << "DPS Player List Size: " << Player::dpsPlayerList.size() << std::endl;
-    
 }
 
 void Party::buildParty() {
@@ -64,7 +78,16 @@ void Party::buildParty() {
     while (canBuildFullParty) {
 
         PartyObject partyObject;
+
+        //Generate a random time within the interval
+        //https://stackoverflow.com/questions/7560114/random-number-c-in-some-range
+        std::random_device randomDevice;
+        std::mt19937 gen(randomDevice());
+        std::uniform_int_distribution<> distr(Config::dungeonMinTime, Config::dungeonMaxTime);
+
+        partyObject.timeInDungeon = distr(gen);
         partyObject.partyID = partyID;
+        partyObject.status = "queued";
 
         // Check if we have enough players to form a full party (1 tank, 1 healer, 3 DPS)
         if (Player::tankPlayerList.size() < 1 || Player::healerPlayerList.size() < 1 || Player::dpsPlayerList.size() < 3) {
@@ -121,6 +144,8 @@ void Party::buildParty() {
             partyID++;
         }
     }
+    // Every new party is created, deploy to a dungeon immediately
+    Party::deployParties();
 }
 
 

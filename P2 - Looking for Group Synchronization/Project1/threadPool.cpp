@@ -1,13 +1,13 @@
 #include "threadPool.h"
 #include "config.h"
+#include "dungeonConfig.h"
 
 #include <functional>
 #include <iostream>
-#include <random>
 
-// Currently testing for 1 thread (para hindi nakakagulo for synchronization)
+std::vector<DungeonObject> Dungeon::dungeonList;
 
-void ThreadPool::giveNewTask(const std::function<void(int threadID, int dungeonTime)>& task) {
+void ThreadPool::giveNewTask(const std::function<void(int threadID)>& task) {
     taskMutex.lock();
     taskList.push(task);
     taskMutex.unlock();
@@ -15,11 +15,11 @@ void ThreadPool::giveNewTask(const std::function<void(int threadID, int dungeonT
 }
 
 // This is like the "Worker" thread
-void ThreadPool::threadLoop(int threadID, int dungeonTime) {
+void ThreadPool::threadLoop(int threadID) {
     while (true) {
 
         //A placeholder where the task will be placed.
-        std::function<void(int threadID, int dungeonTime)> task;
+        std::function<void(int threadID)> task;
 
         //Using unique_lock is required to use inside a conditional variable
         std::unique_lock<std::mutex> lock(taskMutex);
@@ -44,21 +44,25 @@ void ThreadPool::threadLoop(int threadID, int dungeonTime) {
         lock.unlock();
 
         // Execute the task
-        task(threadID, dungeonTime);
+        task(threadID);
     }
 }
 
 void ThreadPool::start() {
 	for (int i = 0; i < Config::numDungeons; i++) {
 
-        //Generate a random time within the interval
-        //https://stackoverflow.com/questions/7560114/random-number-c-in-some-range
-        std::random_device randomDevice;
-        std::mt19937 gen(randomDevice());
-        std::uniform_int_distribution<> distr(Config::dungeonMinTime, Config::dungeonMaxTime);
-        int dungeonTime = distr(gen);
+		threadList.emplace_back(std::thread(&ThreadPool::threadLoop, this, i));
 
-		threadList.emplace_back(std::thread(&ThreadPool::threadLoop, this, i, dungeonTime));
+        //Initialize Dungeons
+        DungeonObject dungeonObject;
+        dungeonObject.dungeonId = i;
+        dungeonObject.status = "empty";
+        dungeonObject.totalTimeServed = 0;
+        dungeonObject.numServed = 0;
+
+        //Put the dungeon in the dungeon list
+        Dungeon::dungeonList.push_back(dungeonObject);
+
         //std::thread thread(&ThreadPool::threadLoop, this, i, dungeonTime);
         //thread.detach();
 	}
