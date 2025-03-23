@@ -4,11 +4,11 @@
 #include <mutex>
 
 struct PartyObject {
-	int partyID;
+	unsigned int partyID;
 	std::vector<PlayerObject> members;
-	int dungeonID;
+	unsigned int dungeonID;
 	std::string status;
-	int timeInDungeon;
+	unsigned int timeInDungeon;
 };
 
 class Party {
@@ -16,7 +16,8 @@ public:
 	static void buildParty();
 	static void deployParties();
 	static std::vector<PartyObject> partyList;
-	static int doneCount;
+	static unsigned int doneCount;
+	static bool isAllPartyCreated;
 private:
 	static std::mutex partyListMutex;
 };

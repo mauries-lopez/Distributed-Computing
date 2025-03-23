@@ -7,19 +7,23 @@ class Config {
 public:
 
 	// User Input
-	static int numDungeons; // n
-	static int numTanks; // t
-	static int numHealers; // h
-	static int numDps; // d
-	static int dungeonMinTime; // t1
-	static int dungeonMaxTime; // t2
+	static unsigned int numDungeons; // n
+	static unsigned int numTanks; // t
+	static unsigned int numHealers; // h
+	static unsigned int numDps; // d
+	static unsigned int dungeonMinTime; // t1
+	static unsigned int dungeonMaxTime; // t2
 
 	// Functions
 	static void getUserInput();
 	static void initializeConfig();
 
 	// Virtual Time
-	static int virtualTime;
+	static unsigned int virtualTime;
+
+	// Progress Bar
+	static std::vector<std::string> progressBarParties;
+	static std::vector<std::string> progressBarDungeons;
 
 private:
 };

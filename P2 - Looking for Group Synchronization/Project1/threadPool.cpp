@@ -6,8 +6,9 @@
 #include <iostream>
 
 std::vector<DungeonObject> Dungeon::dungeonList;
+bool ThreadPool::isAllDungeonCreated;
 
-void ThreadPool::giveNewTask(const std::function<void(int threadID)>& task) {
+void ThreadPool::giveNewTask(const std::function<void(unsigned int threadID)>& task) {
     taskMutex.lock();
     taskList.push(task);
     taskMutex.unlock();
@@ -15,11 +16,11 @@ void ThreadPool::giveNewTask(const std::function<void(int threadID)>& task) {
 }
 
 // This is like the "Worker" thread
-void ThreadPool::threadLoop(int threadID) {
+void ThreadPool::threadLoop(unsigned int threadID) {
     while (true) {
 
         //A placeholder where the task will be placed.
-        std::function<void(int threadID)> task;
+        std::function<void(unsigned int threadID)> task;
 
         //Using unique_lock is required to use inside a conditional variable
         std::unique_lock<std::mutex> lock(taskMutex);
@@ -49,8 +50,7 @@ void ThreadPool::threadLoop(int threadID) {
 }
 
 void ThreadPool::start() {
-	for (int i = 0; i < Config::numDungeons; i++) {
-
+	for (unsigned int i = 0; i < Config::numDungeons; i++) {
 		threadList.emplace_back(std::thread(&ThreadPool::threadLoop, this, i));
 
         //Initialize Dungeons
@@ -63,9 +63,11 @@ void ThreadPool::start() {
         //Put the dungeon in the dungeon list
         Dungeon::dungeonList.push_back(dungeonObject);
 
-        //std::thread thread(&ThreadPool::threadLoop, this, i, dungeonTime);
-        //thread.detach();
+        //Progress Bar
+        std::string log = "[SYSTEM: Dungeon #" + std::to_string(i+1) + "/" + std::to_string(Config::numDungeons) + " created.]";
+        Config::progressBarDungeons.insert(Config::progressBarDungeons.begin(), log);
 	}
+    ThreadPool::isAllDungeonCreated = true;
 }
 
 bool ThreadPool::busy() {

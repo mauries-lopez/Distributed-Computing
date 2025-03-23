@@ -12,17 +12,18 @@
 
 std::vector<PartyObject> Party::partyList;
 std::mutex Party::partyListMutex;
-int Party::doneCount;
+unsigned int Party::doneCount;
 std::mutex Dungeon::dungeonListMutex;
+bool Party::isAllPartyCreated;
+
+ThreadPool* threadPool = new ThreadPool();
 
 void Party::deployParties() {
 
-	ThreadPool threadPool;
-	threadPool.start(); // Create the number of dungeons
-    int i = 0;
-    int dungeonListSize = Dungeon::dungeonList.size();
-    int x = 0;
-    int partyListSize = Party::partyList.size();
+    unsigned int i = 0;
+    size_t dungeonListSize = Dungeon::dungeonList.size();
+    unsigned int x = 0;
+    size_t partyListSize = Party::partyList.size();
 
     while (true) {
 
@@ -44,9 +45,9 @@ void Party::deployParties() {
                 Party::partyList.at(x).status = "active";
                 Dungeon::dungeonList.at(i).status = "active";
                 // Assign the task to the thread pool, capture currentParty by value
-                threadPool.giveNewTask([x, i](int threadID) {
-                    int originalTime = Party::partyList.at(x).timeInDungeon;
-                    int dungeonTime = 0;
+                threadPool->giveNewTask([x, i](unsigned int threadID) {
+                    unsigned int originalTime = Party::partyList.at(x).timeInDungeon;
+                    unsigned int dungeonTime = 0;
                     //Dungeon Life Time
                     do {
                         Dungeon::dungeonList.at(i).curDungeonTime = dungeonTime;
@@ -67,15 +68,22 @@ void Party::deployParties() {
         i++;
     }
 
-    threadPool.busy();
-    threadPool.stop();
+    threadPool->busy();
+    threadPool->stop();
 }
 
 void Party::buildParty() {
+
+    std::thread poolThread(&ThreadPool::start, threadPool);
+    poolThread.detach();
+    //threadPool.start();
+
     bool canBuildFullParty = true;
-    int partyID = 0;
+    unsigned int partyID = 0;
 
     while (canBuildFullParty) {
+
+        system("cls");
 
         PartyObject partyObject;
 
@@ -124,7 +132,7 @@ void Party::buildParty() {
             }
 
             // Get 3 DPS from dpsPlayerList
-            for (int i = 0; i < 3 && !Player::dpsPlayerList.empty(); i++) {
+            for (unsigned int i = 0; i < 3 && !Player::dpsPlayerList.empty(); i++) {
                 PlayerObject player;
 
                 // Get the first player in the list of DPS
@@ -143,9 +151,15 @@ void Party::buildParty() {
             Party::partyList.push_back(partyObject);
             partyID++;
         }
+
+        std::string log = "[SYSTEM: Party #" + std::to_string(partyID) + " created.]";
+        Config::progressBarParties.insert(Config::progressBarParties.begin(), log);
+
+        std::cout << Config::progressBarParties.at(0) << std::endl;
+        std::cout << Config::progressBarDungeons.at(0) << std::endl;
     }
-    // Every new party is created, deploy to a dungeon immediately
+
+    Party::isAllPartyCreated = true;
+    std::cout << "[SYSTEM: Parties created]" << std::endl;
     Party::deployParties();
 }
-
-

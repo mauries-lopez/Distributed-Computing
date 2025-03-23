@@ -5,12 +5,12 @@
 #include <string>
 
 struct DungeonObject {
-	int dungeonId;
-	int numServed;
-	int totalTimeServed;
+	unsigned int dungeonId;
+	unsigned int numServed;
+	unsigned int totalTimeServed;
 	std::vector<PartyObject> partyList;
 	std::string status;
-	int curDungeonTime;
+	unsigned int curDungeonTime;
 };
 
 class Dungeon {
