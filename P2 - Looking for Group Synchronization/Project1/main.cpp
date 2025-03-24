@@ -87,6 +87,27 @@ static void viewStatus() {
 		}
 	}
 
+	// Clear the console to "refresh" the view
+	system("clear"); // For Linux/Unix, or use "cls" for Windows
+
+	// Print dungeon status
+	std::cout << "------------------- Dungeon Status -------------------" << std::endl;
+	for (unsigned int i = 0; i < Dungeon::dungeonList.size(); i++) {
+		std::cout << "[DungeonID: " << Dungeon::dungeonList.at(i).dungeonId << "] - [" << Dungeon::dungeonList.at(i).status << "] " << std::endl;
+		std::cout << "[Party Served: " << Dungeon::dungeonList.at(i).numServed << "]" << std::endl;
+		std::cout << "[Total Time Served: " << Dungeon::dungeonList.at(i).totalTimeServed << "s] " << std::endl;
+		for (unsigned int x = 0; x < Party::partyList.size(); x++) {
+			if (Party::partyList.at(x).dungeonID == Dungeon::dungeonList.at(i).dungeonId) {
+				if (Party::partyList.at(x).status == "active") {
+					std::cout << "[PartyID: " << Party::partyList.at(x).partyID << "] ";
+					std::cout << "[Time: " << Dungeon::dungeonList.at(i).curDungeonTime << "/" << Party::partyList.at(x).timeInDungeon << "s]" << std::endl;
+					break;
+				}
+			}
+		}
+		std::cout << "------------------------------------------------------" << std::endl;
+	}
+
 	// Player size for each class
 	std::cout << "------------- Player Count without Party -------------" << std::endl;
 	std::cout << "Tank Player List Size: " << Player::tankPlayerList.size() << std::endl;

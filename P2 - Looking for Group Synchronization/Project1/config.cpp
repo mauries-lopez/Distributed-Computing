@@ -25,16 +25,16 @@ std::vector<PlayerObject> Player::dpsPlayerList;
 // Valid Input Checker
 void getInputAndValidate(std::string question, std::string subject, unsigned int& configParam) {
 
-	bool isPassedNumberCheck = false, isPassedLogicCheck = false, isPassedAllChecks = false;
-	unsigned int tempInput;
+	bool isPassedNumberCheck = false, isPassedConversionCheck = false, isPassedLogicCheck = false, isPassedAllChecks = false;
+	unsigned int mainInput = 0;
+	std::string tempInput;
 
 	// For NUMBER checking
 	// - No string and characters allowed
-	// - still has bugs with "5@" may kasunod na character <---------- FIX THIS
 
 	//For LOGIC
 	//[1] - 1 Tank [/], 1 Healer[/], 3 DPS[/]
-	//[2] - If it lacks 1 or more, dont continue. Prompt unable to create atleast 1 party, roles unable to filled.
+	//[2] - If it lacks 1 or more, dont continue. Prompt unable to create atleast 1 party, roles unable to filled. [/]
 	//[3] - No zero value in each role [/]
 	//[4] - Check for these values:
 	//		(negative max - 1) [/]
@@ -42,35 +42,67 @@ void getInputAndValidate(std::string question, std::string subject, unsigned int
 	//		(-1) [/]
 	//		(0) [/]
 	//		(1) [/]
-	//		(max) 
-	//		(max + 1)
+	//		(max) [/]
+	//		(max + 1) [/]
 	//[5] - max is less than min [/]
-	//[6] - 
+
 	do {
 		std::cout << question;
-		std::cin >> tempInput;
-		
-		// NUMBER Checking
-		if (!(std::cin.fail())) {
-			isPassedNumberCheck = true;
-		}
-		else {
-			std::cout << "[ERROR: Input postive numerical values only.]" << std::endl;
+		std::getline(std::cin, tempInput);
+
+		// NUMBER Checking (first layer of checking)
+		for (char c : tempInput) {
+			if (!(std::isdigit(c)) || std::isspace(c)) {
+				std::cout << "[ERROR: Input postive numerical values only.]" << std::endl;
+				isPassedNumberCheck = false;
+				break;
+			}
+			else {
+				isPassedNumberCheck = true;
+			}
 		}
 
-		// LOGIC Checking (after first layer of checking is done.)
 		if (isPassedNumberCheck == true) {
+			//Reset previous check
+			//isPassedNumberCheck = false;
+
+			unsigned long temp;
+			try {
+				temp = std::stoul(tempInput);
+
+				// Check temp if it goes beyond the limit of unsigned int max before converting it to it.
+				if (temp > std::numeric_limits<unsigned int>::max()) {
+					std::cout <<  "[ERROR: Value is too large. Inputted value should be within 1 - 1000.]" << std::endl;
+				}
+				else {
+					mainInput = (unsigned int)(temp);
+					isPassedConversionCheck = true;
+				}
+			}
+			catch (const std::out_of_range& e) { //To catch error of string to unsigned long conversion
+				std::cout << "[ERROR: Value is too large. Inputted value should be within 1 - 1000.]"<< std::endl;
+			}
+		}
+
+		// LOGIC Checking (second layer of checking)
+		if (isPassedNumberCheck == true && isPassedConversionCheck == true) {
 			// Reset Check, so it can only enter once
 			isPassedNumberCheck = false;
+			isPassedConversionCheck = false;
 
-			if (tempInput <= 0 || (int)tempInput <= 0) { // (int)tempInput checks for the integer version of the unsigned integer
+			if (mainInput <= 0 || (int)mainInput <= 0) { // (int)tempInput checks for the integer version of the unsigned integer
 				std::cout << "[ERROR: Only greater than 0 is allowed.]" << std::endl;
 			}
-			else if (subject == "dps" && tempInput < 3) { // Atleast 3 DPS
+			else if (subject == "dps" && mainInput < 3) { // Atleast 3 DPS
 				std::cout << "[ERROR: Not enough DPS to create a party. Atleast 3 DPS is needed.]" << std::endl;
 			}
-			else if (subject == "maxtime" && tempInput < Config::dungeonMinTime) {
+			else if (subject == "maxtime" && mainInput < Config::dungeonMinTime) { // Maxtime should not be less than mintime
 				std::cout << "[ERROR: Maxmum Time should be greater than the Minimum Time.]" << std::endl;
+			}
+			else if ( mainInput > 1000 ) { // Should limit unsigned int max input.
+				// Limit to 1000
+				// I tested 1000, considerable na siya na pwedeng hintayin para matest ang code for huge quantity. 
+				std::cout << "[ERROR: Value is too large. Inputted value should be within 1 - 1000.]" << std::endl;
 			}
 			else {
 				isPassedAllChecks = true;
@@ -80,10 +112,9 @@ void getInputAndValidate(std::string question, std::string subject, unsigned int
 		if (isPassedAllChecks == false) {
 			//Reset Input
 			std::cin.clear();
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		}
 		
-		configParam = tempInput;
+		configParam = mainInput;
 		
 	} while (isPassedAllChecks == false);
 }
@@ -140,11 +171,6 @@ void Config::initializeConfig() {
 			Player::dpsPlayerList.push_back(player);
 			nDps--;
 		}
-	}
-	
-	//Initialize Dungeon Object
-	for (unsigned int i = 0; i < Config::numDungeons; i++) {
-
 	}
 
 	// Check Player Information
