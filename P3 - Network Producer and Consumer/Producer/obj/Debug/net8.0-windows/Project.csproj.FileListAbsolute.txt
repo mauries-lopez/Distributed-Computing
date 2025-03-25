@@ -1,0 +1,16 @@
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\obj\Debug\net8.0-windows\Project.Form1.resources
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\obj\Debug\net8.0-windows\Project.csproj.GenerateResource.cache
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\obj\Debug\net8.0-windows\Project.GeneratedMSBuildEditorConfig.editorconfig
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\obj\Debug\net8.0-windows\Project.AssemblyInfoInputs.cache
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\obj\Debug\net8.0-windows\Project.AssemblyInfo.cs
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\obj\Debug\net8.0-windows\Project.csproj.CoreCompileInputs.cache
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\bin\Debug\net8.0-windows\Project.exe
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\bin\Debug\net8.0-windows\Project.deps.json
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\bin\Debug\net8.0-windows\Project.runtimeconfig.json
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\bin\Debug\net8.0-windows\Project.dll
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\bin\Debug\net8.0-windows\Project.pdb
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\obj\Debug\net8.0-windows\Project.dll
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\obj\Debug\net8.0-windows\refint\Project.dll
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\obj\Debug\net8.0-windows\Project.pdb
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\obj\Debug\net8.0-windows\Project.genruntimeconfig.cache
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Project\obj\Debug\net8.0-windows\ref\Project.dll
