@@ -32,6 +32,8 @@
             numThreadsInput = new TextBox();
             threadInputLabel = new Label();
             mainBtn = new Button();
+            ipAddressLabel = new Label();
+            ipAddressInput = new TextBox();
             SuspendLayout();
             // 
             // logBox
@@ -81,11 +83,33 @@
             mainBtn.UseVisualStyleBackColor = true;
             mainBtn.Click += mainBtn_Click;
             // 
+            // ipAddressLabel
+            // 
+            ipAddressLabel.AutoSize = true;
+            ipAddressLabel.Font = new Font("Segoe UI", 12F);
+            ipAddressLabel.Location = new Point(12, 73);
+            ipAddressLabel.Name = "ipAddressLabel";
+            ipAddressLabel.Size = new Size(154, 21);
+            ipAddressLabel.TabIndex = 5;
+            ipAddressLabel.Text = "IPv4 Address of Host";
+            ipAddressLabel.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // ipAddressInput
+            // 
+            ipAddressInput.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            ipAddressInput.Location = new Point(12, 97);
+            ipAddressInput.Name = "ipAddressInput";
+            ipAddressInput.Size = new Size(397, 23);
+            ipAddressInput.TabIndex = 6;
+            ipAddressInput.WordWrap = false;
+            // 
             // Consumer
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(ipAddressInput);
+            Controls.Add(ipAddressLabel);
             Controls.Add(mainBtn);
             Controls.Add(threadInputLabel);
             Controls.Add(numThreadsInput);
@@ -106,5 +130,7 @@
         private TextBox numThreadsInput;
         private Label threadInputLabel;
         private Button mainBtn;
+        private Label ipAddressLabel;
+        private TextBox ipAddressInput;
     }
 }

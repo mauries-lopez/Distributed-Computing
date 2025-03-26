@@ -48,7 +48,6 @@
             logBox.Name = "logBox";
             logBox.ReadOnly = true;
             logBox.ScrollBars = ScrollBars.Vertical;
-            logBox.ShortcutsEnabled = false;
             logBox.Size = new Size(366, 337);
             logBox.TabIndex = 0;
             logBox.TabStop = false;

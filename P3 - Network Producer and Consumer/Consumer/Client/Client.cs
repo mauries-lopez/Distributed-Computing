@@ -10,20 +10,35 @@ namespace Project.Client
     {
         public static async void ConnectToServer(Consumer consumer)
         {
-            IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = ipHost.AddressList[0];
-            consumer.LogMessage("[SERVER]: Retrieving Local IP Address...");
+            string serverIpAddress = consumer.RetrieveIPAddress(); // Replace with the actual IPv4 address of HOST (cmd -> ipconfig -> copy ipv4 address)
+            int serverPort = 1023;
 
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 1023);
-            consumer.LogMessage("[SERVER]: Preparing the local end point on...");
+            try
+            {
+                consumer.LogMessage($"[SYSTEM]: Attempting to connect to {serverIpAddress}:{serverPort}...");
 
-            Socket sender = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            consumer.LogMessage("[SERVER]: Setting up socket and TCP connection...");
+                IPAddress ipAddress = IPAddress.Parse(serverIpAddress);
+                IPEndPoint remoteEndPoint = new IPEndPoint(ipAddress, serverPort);
 
-            // Start listening for connections
-            await Task.Run(() => ClientListener(consumer, sender, localEndPoint));
+                Socket sender = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+                await sender.ConnectAsync(remoteEndPoint);
+                consumer.LogMessage($"[SYSTEM]: Connected to {serverIpAddress}:{serverPort}.");
+
+                // Start listening for data from the server
+                await Task.Run(() => ClientListener(consumer, sender)); // Create ClientListener Method
+
+            }
+            catch (SocketException ex)
+            {
+                consumer.LogMessage($"[SYSTEM]: Connection failed: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                consumer.LogMessage($"[SYSTEM]: An error occurred: {ex.Message}");
+            }
         }
-        private static async Task ClientListener(Consumer consumer, Socket sender, IPEndPoint localEndPoint)
+        private static async Task ClientListener(Consumer consumer, Socket sender)
         {
             try
             {
@@ -31,10 +46,6 @@ namespace Project.Client
                 //{
 
                 //}
-
-                // Connect to the server
-                sender.Connect(localEndPoint);
-                consumer.LogMessage("[SERVER]: Successfully connected to the server!");
 
                 // Get unique identifier
                 await GetUIDAsync(sender, consumer);

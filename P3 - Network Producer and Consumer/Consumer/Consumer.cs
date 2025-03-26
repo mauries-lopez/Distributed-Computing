@@ -36,6 +36,15 @@ namespace Project
             }
         }
 
+        public string RetrieveIPAddress()
+        {
+            // Disable UI
+            ipAddressInput.Visible = false;
+            ipAddressLabel.Visible = false;
+
+            return ipAddressInput.Text;
+        }
+
         // To retrieve the inputs from the text boxes
         public void RetrieveParameters()
         {
@@ -98,6 +107,12 @@ namespace Project
         {
             // Retrieve input parameters
             RetrieveParameters();
+
+            // Retrieve IPv4
+            RetrieveIPAddress();
+
+            // Connect To Server
+            Client.Client.ConnectToServer(this); //Server folder -> Server.cs -> Function
         }
 
         internal void AddUIDTitle(Socket sender)

@@ -17,9 +17,6 @@ namespace Project
             // Create Producer Instance
             Consumer consumer = new Consumer();
 
-            // Create Server
-            Client.Client.ConnectToServer(consumer); //Server folder -> Server.cs -> Function
-
             // Run Producer
             Application.Run(consumer);
         }

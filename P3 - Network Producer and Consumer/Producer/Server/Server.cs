@@ -22,17 +22,18 @@ namespace Project.Server
         public static async void EstablishConnection(Producer producer)
         {
             IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = ipHost.AddressList[0];
             producer.LogMessage("[SERVER]: Retrieving Local IP Address...");
 
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 1023);
+            IPAddress localIp = ipHost.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+
+            IPEndPoint localEndPoint = new IPEndPoint(localIp, 1023); // Bind to all interfaces
             producer.LogMessage("[SERVER]: Preparing the local end point on...");
 
-            Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            Socket listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp); // Ensure IPv4
             producer.LogMessage("[SERVER]: Setting up socket and TCP connection...");
 
             listener.Bind(localEndPoint);
-            producer.LogMessage("[SERVER]: Binding socket to local end point...");
+            producer.LogMessage($"[SERVER]: Connected on IPv4 Connection - ({localIp})");
 
             listener.Listen(5);
             producer.LogMessage("[SERVER]: Preparing for client connection (max of 5)...");
