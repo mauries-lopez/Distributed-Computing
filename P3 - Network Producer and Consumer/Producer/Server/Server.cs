@@ -41,26 +41,39 @@ namespace Project.Server
             await Task.Run(() => ServerListener(producer, listener));
         }
 
+        private static readonly object socketLock = new object();
+
         public static void SendVideoToClient(string filePath, Producer producer)
         {
-            // 1. Send the file size
-            FileInfo fileInfo = new FileInfo(filePath);
-            long fileSize = fileInfo.Length;
-            byte[] fileSizeBytes = BitConverter.GetBytes(fileSize);
-            ClientSettings.selectedSocket.Send(fileSizeBytes);
+            lock (socketLock)  // Locking the socket communication
+            {
+                try
+                {
+                    // 1. Send the file size
+                    FileInfo fileInfo = new FileInfo(filePath);
+                    long fileSize = fileInfo.Length;
+                    byte[] fileSizeBytes = BitConverter.GetBytes(fileSize);
+                    ClientSettings.selectedSocket.Send(fileSizeBytes);
 
-            // 2. Send the video file 
-            byte[] fileData = File.ReadAllBytes(filePath);
-            if (ClientSettings.selectedSocket != null && ClientSettings.selectedSocket.Connected)
-            {
-                ClientSettings.selectedSocket.Send(fileData);
-                producer.LogMessage("[SYSTEM]: Video file (" + filePath + ") is being received by the consumer...");
-            }
-            else
-            {
-                producer.LogMessage("[ERROR]: Socket is not connected.");
+                    // 2. Send the video file
+                    byte[] fileData = File.ReadAllBytes(filePath);
+                    if (ClientSettings.selectedSocket != null && ClientSettings.selectedSocket.Connected)
+                    {
+                        ClientSettings.selectedSocket.Send(fileData);
+                        producer.LogMessage("[SYSTEM]: Video file (" + filePath + ") is being received by the consumer...");
+                    }
+                    else
+                    {
+                        producer.LogMessage("[ERROR]: Socket is not connected.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    producer.LogMessage($"[ERROR]: Exception occurred: {ex.Message}");
+                }
             }
         }
+
 
         private static async Task ServerListener(Producer producer, Socket listener)
         {
