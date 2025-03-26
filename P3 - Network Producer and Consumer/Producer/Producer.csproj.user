@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <_LastSelectedProfileId>C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\Properties\PublishProfiles\ClickOnceProfile.pubxml</_LastSelectedProfileId>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Update="Producer.cs">
       <SubType>Form</SubType>

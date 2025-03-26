@@ -1,0 +1,5 @@
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Consumer.exe
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Consumer.dll
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Consumer.deps.json
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Consumer.runtimeconfig.json
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Consumer.pdb

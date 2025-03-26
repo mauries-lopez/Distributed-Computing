@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Producer.Configuration;
 
 namespace Project.Server
 {
@@ -16,6 +17,8 @@ namespace Project.Server
         // The way the algorithm works is like a PEER-TO-PEER Connection
         // Producer = this is the SERVER/HOST, this will be the FIRST peer who will open the application. (The connection establishment will be done at the background on PRODUCER SIDE)
         // Consumer = 
+
+        private static int clientID = 0;
         public static async void EstablishConnection(Producer producer)
         {
             IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
@@ -32,11 +35,33 @@ namespace Project.Server
             producer.LogMessage("[SERVER]: Binding socket to local end point...");
 
             listener.Listen(5);
-            producer.LogMessage("[SERVER]: Preparing queue (max of 5) for client connection...");
+            producer.LogMessage("[SERVER]: Preparing for client connection (max of 5)...");
 
             // Start listening for connections
             await Task.Run(() => ServerListener(producer, listener));
         }
+
+        public static void SendVideoToClient(string filePath, Producer producer)
+        {
+            // 1. Send the file size
+            FileInfo fileInfo = new FileInfo(filePath);
+            long fileSize = fileInfo.Length;
+            byte[] fileSizeBytes = BitConverter.GetBytes(fileSize);
+            ClientSettings.selectedSocket.Send(fileSizeBytes);
+
+            // 2. Send the video file 
+            byte[] fileData = File.ReadAllBytes(filePath);
+            if (ClientSettings.selectedSocket != null && ClientSettings.selectedSocket.Connected)
+            {
+                ClientSettings.selectedSocket.Send(fileData);
+                producer.LogMessage("[SYSTEM]: Video file (" + filePath + ") is being received by the consumer...");
+            }
+            else
+            {
+                producer.LogMessage("[ERROR]: Socket is not connected.");
+            }
+        }
+
         private static async Task ServerListener(Producer producer, Socket listener)
         {
             try
@@ -47,7 +72,11 @@ namespace Project.Server
 
                     // Accept a client connection asynchronously
                     Socket clientSocket = await listener.AcceptAsync();
+                    ClientSettings.clientID.Add(clientID);
+                    ClientSettings.clientSocket.Add(clientSocket);
+                    clientID++;
                     producer.LogMessage("[SERVER]: Client connected.");
+                    producer.LogConnectedClient(clientSocket);
 
                     // Now you can handle the client communication here (e.g., receive/send data)
                     // You might spawn a separate thread/task to handle communication with this client.
@@ -64,6 +93,7 @@ namespace Project.Server
         {
             producer.LogMessage("[SERVER]: Handling client communication...");
 
+            SendUniqueClientSocket(clientSocket, producer);
             // You can add logic here for reading/writing data to the client.
             // For example: clientSocket.Receive(), clientSocket.Send() etc.
 
@@ -71,6 +101,16 @@ namespace Project.Server
             //clientSocket.Shutdown(SocketShutdown.Both);
             //clientSocket.Close();
             //producer.LogMessage("[SERVER]: Client connection closed.");
+        }
+
+        private static void SendUniqueClientSocket(Socket clientSocket, Producer producer)
+        {
+            string clientEndPoint = clientSocket.RemoteEndPoint.ToString();
+            producer.LogMessage("[SERVER]: Sending Unique Identifier...");
+
+            byte[] endPointBytes = System.Text.Encoding.UTF8.GetBytes(clientEndPoint);
+            clientSocket.Send(endPointBytes);
+            producer.LogMessage("[SERVER]: Unique identifier sent!");
         }
     }
 }

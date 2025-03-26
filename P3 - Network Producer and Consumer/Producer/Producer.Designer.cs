@@ -32,18 +32,24 @@
             numThreadsInput = new TextBox();
             threadInputLabel = new Label();
             mainBtn = new Button();
+            browseBtn = new Button();
+            selectedFileLog = new TextBox();
+            selectedFileLabel = new Label();
+            folderBrowserDialog1 = new FolderBrowserDialog();
+            connectedClientList = new CheckedListBox();
+            connectedClientLabel = new Label();
             SuspendLayout();
             // 
             // logBox
             // 
             logBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            logBox.Location = new Point(422, 12);
+            logBox.Location = new Point(422, 101);
             logBox.Multiline = true;
             logBox.Name = "logBox";
             logBox.ReadOnly = true;
             logBox.ScrollBars = ScrollBars.Vertical;
             logBox.ShortcutsEnabled = false;
-            logBox.Size = new Size(366, 426);
+            logBox.Size = new Size(366, 337);
             logBox.TabIndex = 0;
             logBox.TabStop = false;
             // 
@@ -81,11 +87,80 @@
             mainBtn.UseVisualStyleBackColor = true;
             mainBtn.Click += mainBtn_Click;
             // 
+            // browseBtn
+            // 
+            browseBtn.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            browseBtn.Location = new Point(12, 36);
+            browseBtn.Name = "browseBtn";
+            browseBtn.Size = new Size(397, 23);
+            browseBtn.TabIndex = 5;
+            browseBtn.Text = "Browse";
+            browseBtn.UseVisualStyleBackColor = true;
+            browseBtn.Visible = false;
+            browseBtn.Click += browseBtn_Click;
+            // 
+            // selectedFileLog
+            // 
+            selectedFileLog.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            selectedFileLog.Location = new Point(12, 82);
+            selectedFileLog.Multiline = true;
+            selectedFileLog.Name = "selectedFileLog";
+            selectedFileLog.ReadOnly = true;
+            selectedFileLog.ScrollBars = ScrollBars.Both;
+            selectedFileLog.ShortcutsEnabled = false;
+            selectedFileLog.Size = new Size(397, 272);
+            selectedFileLog.TabIndex = 6;
+            selectedFileLog.TabStop = false;
+            selectedFileLog.Visible = false;
+            selectedFileLog.WordWrap = false;
+            // 
+            // selectedFileLabel
+            // 
+            selectedFileLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            selectedFileLabel.AutoSize = true;
+            selectedFileLabel.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
+            selectedFileLabel.Location = new Point(12, 64);
+            selectedFileLabel.Name = "selectedFileLabel";
+            selectedFileLabel.Size = new Size(95, 15);
+            selectedFileLabel.TabIndex = 7;
+            selectedFileLabel.Text = "Selected Folder/s";
+            selectedFileLabel.TextAlign = ContentAlignment.MiddleLeft;
+            selectedFileLabel.Visible = false;
+            // 
+            // connectedClientList
+            // 
+            connectedClientList.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            connectedClientList.BackColor = SystemColors.Control;
+            connectedClientList.FormattingEnabled = true;
+            connectedClientList.Location = new Point(422, 37);
+            connectedClientList.Name = "connectedClientList";
+            connectedClientList.Size = new Size(366, 58);
+            connectedClientList.TabIndex = 8;
+            connectedClientList.ThreeDCheckBoxes = true;
+            connectedClientList.SelectedIndexChanged += connectedClientList_SelectedIndexChanged;
+            // 
+            // connectedClientLabel
+            // 
+            connectedClientLabel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            connectedClientLabel.AutoSize = true;
+            connectedClientLabel.Font = new Font("Segoe UI", 12F);
+            connectedClientLabel.Location = new Point(422, 12);
+            connectedClientLabel.Name = "connectedClientLabel";
+            connectedClientLabel.Size = new Size(176, 21);
+            connectedClientLabel.TabIndex = 9;
+            connectedClientLabel.Text = "Connected Consumer/s:";
+            connectedClientLabel.TextAlign = ContentAlignment.MiddleLeft;
+            // 
             // Producer
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(connectedClientLabel);
+            Controls.Add(connectedClientList);
+            Controls.Add(selectedFileLabel);
+            Controls.Add(selectedFileLog);
+            Controls.Add(browseBtn);
             Controls.Add(mainBtn);
             Controls.Add(threadInputLabel);
             Controls.Add(numThreadsInput);
@@ -106,5 +181,11 @@
         private TextBox numThreadsInput;
         private Label threadInputLabel;
         private Button mainBtn;
+        private Button browseBtn;
+        private TextBox selectedFileLog;
+        private Label selectedFileLabel;
+        private FolderBrowserDialog folderBrowserDialog1;
+        private CheckedListBox connectedClientList;
+        private Label connectedClientLabel;
     }
 }

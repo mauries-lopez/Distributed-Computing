@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using Producer.Configuration;
 
 namespace Project
@@ -20,6 +21,18 @@ namespace Project
             else
             {
                 logBox.AppendText(message + Environment.NewLine);
+            }
+        }
+
+        // Add application title to contain unique identifier
+        public void AddUIDTitle (string uniqueConnection)
+        {
+            if ( this.InvokeRequired )
+            {
+                this.Invoke(new Action(() => AddUIDTitle(uniqueConnection)));
+            } else
+            {
+                this.Text = "Consumer (" + uniqueConnection + ")";
             }
         }
 
@@ -87,5 +100,9 @@ namespace Project
             RetrieveParameters();
         }
 
+        internal void AddUIDTitle(Socket sender)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
