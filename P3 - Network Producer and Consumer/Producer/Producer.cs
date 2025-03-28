@@ -51,12 +51,58 @@ namespace Project
             int successChecks = 0;
 
             // Retrieve input from the UI
-            string tempNumThreads = numThreadsInput.Text;
+            List<TextBox> parameters = new List<TextBox>();
+            parameters.Add(numThreadsInput); // [0]
+
+            // Validate input
+            foreach (TextBox param in parameters)
+            {
+                var returnedValues = validateInput(param.Text);
+                //returnedValues.Item1 = layersPassed
+                //returnedValues.Item2 = converted string to int
+
+                // Button Change UI if all check layers passed
+                if (returnedValues.Item1 == 2)
+                {
+                    if ( param.Name == "numThreadsInput")
+                    {
+                        ConfigParameter.nProducerThreads = returnedValues.Item2;
+                        LogMessage("[SYSTEM]: Successfully initialized " + ConfigParameter.nProducerThreads + " producer thread/s.");
+                    }
+                    else if ( param.Name == "maxQLengthInput")
+                    {
+                        ConfigParameter.nMaxQLength = returnedValues.Item2;
+                        LogMessage("[SYSTEM]: Successfully initialized " + ConfigParameter.nMaxQLength + " max queue length.");
+                    }
+
+
+                    // Button UI
+                    mainBtn.Enabled = false;  // Grey out button
+                    mainBtn.Text = "UPLOAD"; // Change to upload text
+
+                    // Hide Input UI
+                    numThreadsInput.Visible = false;
+
+                    // Show Upload UI
+                    threadInputLabel.Text = "Add a folder you would like to upload";
+                    browseBtn.Visible = true;
+                    selectedFileLabel.Visible = true;
+                    selectedFileLog.Visible = true;
+                }
+            }
+        }
+
+        private (int, int) validateInput(string input)
+        {
+            // Initialize layer of checking
+            int successChecks = 0;
 
             // Convert tempNumThreads to Integer (https://stackoverflow.com/questions/2344411/how-to-convert-string-to-integer-in-c-sharp)
             int i = 0;
             int intNumThreads = 0;
-            bool isSuccessConvert = int.TryParse(tempNumThreads, out i);
+            bool isSuccessConvert = int.TryParse(input, out i);
+
+            // 1st Layer
             if (isSuccessConvert == false)
             {
                 LogMessage("[SYSTEM ERROR]: " + i + " - Invalid Input. Only numerical values are allowed.");
@@ -64,9 +110,10 @@ namespace Project
             else
             {
                 successChecks++; // 1st layer of check
-                intNumThreads = int.Parse(tempNumThreads); // Convert to integer
+                intNumThreads = int.Parse(input); // Convert to integer
             }
 
+            // 2nd Layer
             // Check for validation
             if (intNumThreads <= 0 && isSuccessConvert == true) // Check for negative values
             {
@@ -81,26 +128,7 @@ namespace Project
                 successChecks++;
             }
 
-            // Button Change UI if all check layers passed
-            if (successChecks == 2)
-            {
-                ConfigParameter.nProducerThreads = intNumThreads;
-
-                LogMessage("[SYSTEM]: Successfully initialized to " + ConfigParameter.nProducerThreads + " producer thread/s.");
-
-                // Button UI
-                mainBtn.Enabled = false;  // Grey out button
-                mainBtn.Text = "UPLOAD"; // Change to upload text
-
-                // Hide Input UI
-                numThreadsInput.Visible = false;
-
-                // Show Upload UI
-                threadInputLabel.Text = "Add a folder you would like to upload";
-                browseBtn.Visible = true;
-                selectedFileLabel.Visible = true;
-                selectedFileLog.Visible = true;
-            }
+            return (successChecks, intNumThreads);
         }
 
         // INITIALIZE/UPLOAD button click event listener
@@ -166,6 +194,20 @@ namespace Project
 
         // This is the function used by the threads in ThreadPool
         // 1 thread 1 UploadFolder function -> this opens 1 folder
+
+        // Declare the barrier outside of the threads
+        private static Barrier barrier = new Barrier(ConfigParameter.nProducerThreads);
+
+        // How our leaky bucket algorithm works:
+        // 1. Each folder has its own thread
+        // 2. Each thread will wait for each other to be ready
+        // 3. if all threads are ready, all threads will try to queue their video files at the same time. Discarding all video files that didnt get to be queued. Note: while it did queue all the videos at the same time, these videos are being uploaded immediately as well so it can free some spaces in the queue.
+        // 4. Each thread will take turns to upload A VIDEO!, thread 1 -> thread 2 -> thread 1 -> thread 2...
+
+        // each producer thread will send their video files to a consumer thread??
+        // OR!!!
+        // 1 thread to send video files to consumer and consumer threads are used to save the video files?
+
         private void UploadFolder(object objFolderPath)
         {
             string folderPath = objFolderPath.ToString(); // This is necessary because QueueUserWorkItem gives an object reference
@@ -176,10 +218,10 @@ namespace Project
                 string[] videoFiles = Directory.GetFiles(folderPath, "*.*", SearchOption.AllDirectories)
                                                .Where(file => file.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) ||
                                                               file.EndsWith(".mov", StringComparison.OrdinalIgnoreCase) ||
-                                                              file.EndsWith(".avi", StringComparison.OrdinalIgnoreCase) )
+                                                              file.EndsWith(".avi", StringComparison.OrdinalIgnoreCase))
                                                .ToArray();
 
-                if ( videoFiles != null && videoFiles.Length > 0 )
+                if (videoFiles != null && videoFiles.Length > 0)
                 {
                     foreach (string videoFile in videoFiles)
                     {

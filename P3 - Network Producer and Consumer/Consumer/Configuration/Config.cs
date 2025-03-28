@@ -11,8 +11,17 @@ namespace Producer.Configuration
     // https://www.programiz.com/csharp-programming/struct
     public struct ConfigParameter
     {
-        public int nConsumerThreads;
-        public int nMaxQueueLength;
+        public static int nConsumerThreads;
+        public static int nMaxQueueLength;
     }
-    
+
+    public struct Video
+    {
+        public byte[] videosByte;
+    }
+
+    public struct Queue
+    {
+        public static Queue<Video> videoQueue = new Queue<Video>();
+    }
 }

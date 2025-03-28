@@ -34,6 +34,8 @@
             mainBtn = new Button();
             ipAddressLabel = new Label();
             ipAddressInput = new TextBox();
+            maxQueueLengthLabel = new Label();
+            maxQueueLengthInput = new TextBox();
             SuspendLayout();
             // 
             // logBox
@@ -87,7 +89,7 @@
             // 
             ipAddressLabel.AutoSize = true;
             ipAddressLabel.Font = new Font("Segoe UI", 12F);
-            ipAddressLabel.Location = new Point(12, 73);
+            ipAddressLabel.Location = new Point(12, 132);
             ipAddressLabel.Name = "ipAddressLabel";
             ipAddressLabel.Size = new Size(154, 21);
             ipAddressLabel.TabIndex = 5;
@@ -97,17 +99,40 @@
             // ipAddressInput
             // 
             ipAddressInput.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            ipAddressInput.Location = new Point(12, 97);
+            ipAddressInput.Location = new Point(12, 156);
             ipAddressInput.Name = "ipAddressInput";
             ipAddressInput.Size = new Size(397, 23);
             ipAddressInput.TabIndex = 6;
             ipAddressInput.WordWrap = false;
+            // 
+            // maxQueueLengthLabel
+            // 
+            maxQueueLengthLabel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            maxQueueLengthLabel.AutoSize = true;
+            maxQueueLengthLabel.Font = new Font("Segoe UI", 12F);
+            maxQueueLengthLabel.Location = new Point(12, 72);
+            maxQueueLengthLabel.Name = "maxQueueLengthLabel";
+            maxQueueLengthLabel.Size = new Size(141, 21);
+            maxQueueLengthLabel.TabIndex = 7;
+            maxQueueLengthLabel.Text = "Max Queue Length";
+            maxQueueLengthLabel.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // maxQueueLengthInput
+            // 
+            maxQueueLengthInput.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            maxQueueLengthInput.Location = new Point(12, 96);
+            maxQueueLengthInput.Name = "maxQueueLengthInput";
+            maxQueueLengthInput.Size = new Size(397, 23);
+            maxQueueLengthInput.TabIndex = 8;
+            maxQueueLengthInput.WordWrap = false;
             // 
             // Consumer
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(maxQueueLengthInput);
+            Controls.Add(maxQueueLengthLabel);
             Controls.Add(ipAddressInput);
             Controls.Add(ipAddressLabel);
             Controls.Add(mainBtn);
@@ -132,5 +157,7 @@
         private Button mainBtn;
         private Label ipAddressLabel;
         private TextBox ipAddressInput;
+        private Label maxQueueLengthLabel;
+        private TextBox maxQueueLengthInput;
     }
 }

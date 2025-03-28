@@ -75,6 +75,11 @@ namespace Project.Server
             }
         }
 
+        public static void SendQueueFullToClient()
+        {
+            byte[] fileData = new byte[10];
+            ClientSettings.selectedSocket.Send(fileData);
+        }
 
         private static async Task ServerListener(Producer producer, Socket listener)
         {

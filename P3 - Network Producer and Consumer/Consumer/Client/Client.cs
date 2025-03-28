@@ -3,11 +3,14 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Producer.Configuration;
 
 namespace Project.Client
 {
     internal class Client
     {
+        private static int videoID;
+
         public static async void ConnectToServer(Consumer consumer)
         {
             string serverIpAddress = consumer.RetrieveIPAddress(); // Replace with the actual IPv4 address of HOST (cmd -> ipconfig -> copy ipv4 address)
@@ -42,11 +45,6 @@ namespace Project.Client
         {
             try
             {
-                //while (true)
-                //{
-
-                //}
-
                 // Get unique identifier
                 await GetUIDAsync(sender, consumer);
 
@@ -55,8 +53,17 @@ namespace Project.Client
                 {
                     await Task.Delay(100); //Wait for 100 millisecond before checking for any new video file again.
                 }
-                string saveFolderDirectory = @"C:\Users\mauri\Desktop\Received\";
-                await ReceiveVideoAsync(sender, consumer, saveFolderDirectory);
+
+                // Get the path to the user's Desktop directory
+                string desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                // Specify the folder or file path on the Desktop
+                string saveFolderDirectory = System.IO.Path.Combine(desktopDirectory, "Received");
+
+                // Start receiving the videos and queue them accordingly (this is in a different detached thread) so it can keep on receive and do queueing.
+                StartReceivingInBackground(sender, consumer, saveFolderDirectory);
+
+                // Start processing the queue
+                StartVideoProcessingTask(consumer, saveFolderDirectory);
             }
             catch (Exception ex)
             {
@@ -73,7 +80,63 @@ namespace Project.Client
             consumer.AddUIDTitle(serverSentData);
         }
 
-        private static async Task ReceiveVideoAsync(Socket sender, Consumer consumer, string saveDirectory)
+        private static void StartReceivingInBackground(Socket sender, Consumer consumer, string saveDirectory)
+        {
+            // Create a new thread and start it
+            Thread thread = new Thread(() => KeepReceivingVideo(sender, consumer, saveDirectory));
+            thread.IsBackground = true; // Make it a background thread
+            thread.Start();
+        }
+
+        public static void StartVideoProcessingTask(Consumer consumer, string saveDirectory)
+        {
+            // Set the maximum number of threads in the thread pool to the value defined in the configuration
+            ThreadPool.SetMaxThreads(ConfigParameter.nConsumerThreads, ConfigParameter.nConsumerThreads);
+
+            for (int i = 0; i < ConfigParameter.nConsumerThreads; i++)
+            {
+                // For each thread, run the StartProcessingVideo method
+                Task.Run(() =>
+                {
+                    StartProcessingVideo(consumer, saveDirectory);
+                });
+            }
+        }
+
+        private static void StartProcessingVideo(Consumer consumer, string saveDirectory)
+        {
+            while (true)
+            {
+                Video? completedVideo = null;
+
+                // Lock to safely dequeue the video
+                lock (Queue.videoQueue)
+                {
+                    // Check if there's any video to dequeue
+                    if (Queue.videoQueue.Count > 0)
+                    {
+                        completedVideo = Queue.videoQueue.Dequeue(); // Dequeue the completed video
+                        //consumer.LogMessage($"[SERVER]: Video dequeued. Queue size: {Queue.videoQueue.Count}");
+                    }
+                }
+
+                // If a video was dequeued, process it outside the lock
+                if (completedVideo.HasValue)
+                {
+                    // Process the dequeued video (e.g., save it to a file)
+                    string fileName = $"video_{videoID}_{DateTime.Now.Ticks}.mp4";
+                    string filePath = Path.Combine(saveDirectory, fileName);
+
+                    File.WriteAllBytes(filePath, completedVideo.Value.videosByte); // Save video to disk
+
+                    consumer.LogMessage($"[SERVER]: Video saved at {filePath}.");
+                    videoID++; // Increment video ID after processing
+                }
+            }
+        }
+
+        // This function is ran on a different single thread, its main functionality is to just keep on receiving video and queue them.
+        private static void KeepReceivingVideo(Socket sender, Consumer consumer, string saveDirectory)
         {
             try
             {
@@ -86,57 +149,65 @@ namespace Project.Client
 
                 while (true) // Loop to continually receive files
                 {
-                    // Receive the video file size
-                    byte[] videoFileSize = new byte[sizeof(long)]; // Assumes long to represent large file sizes
-                    int sizeBytesReceived = await sender.ReceiveAsync(videoFileSize, SocketFlags.None);
+                    // Receive the video file size (first step)
+                    byte[] videoFileSize = new byte[sizeof(long)]; // 8 bytes for file size
+                    int sizeBytesReceived = sender.Receive(videoFileSize, SocketFlags.None);
 
-                    // If sizeBytesReceived is 0, connection has been closed
-                    if (sizeBytesReceived == 0)
+                    // If sizeBytesReceived contains a value, it means there's a video being received.
+                    if (sizeBytesReceived > 0)
                     {
-                        consumer.LogMessage("[SERVER]: Connection closed by client.");
-                        break;
-                    }
+                        // Retrieve the video file size
+                        long fileSize = BitConverter.ToInt64(videoFileSize, 0);
+                        byte[] videoFileBuffer = new byte[fileSize];
+                        long totalBytesReceived = 0;
 
-                    if (sizeBytesReceived != sizeof(long))
-                    {
-                        consumer.LogMessage("[SERVER]: Invalid file size received.");
-                        continue; // Skip to next file
-                    }
+                        // Create video object
+                        Video videoFile = new Video();
+                        videoFile.videosByte = new byte[fileSize]; // This will create the buffer for the video.
 
-                    // Convert the byte array to long for actual file size
-                    long fileSize = BitConverter.ToInt64(videoFileSize, 0);
-                    consumer.LogMessage("[SERVER]: Video file size: " + fileSize + " bytes");
+                        bool isVideoQueued = false;
 
-                    // Allocate buffer for the actual file
-                    byte[] videoFileBuffer = new byte[fileSize];
-                    long totalBytesReceived = 0;
-
-                    // Receive the video file in chunks until all bytes are received
-                    while (totalBytesReceived < fileSize)
-                    {
-                        int bytesReceived = await sender.ReceiveAsync(videoFileBuffer.AsMemory((int)totalBytesReceived), SocketFlags.None);
-                        if (bytesReceived == 0)
+                        while (totalBytesReceived < fileSize)
                         {
-                            consumer.LogMessage("[SERVER]: Connection closed unexpectedly while receiving file.");
-                            break;
+                            int bytesReceived = sender.Receive(videoFileBuffer, (int)totalBytesReceived, (int)(fileSize - totalBytesReceived), SocketFlags.None); // Synchronous receive
+
+                            if (bytesReceived == 0)
+                            {
+                                consumer.LogMessage("[SERVER]: Connection closed unexpectedly while receiving the file.");
+                                break;
+                            }
+
+                            // Update the total bytes received
+                            totalBytesReceived += bytesReceived;
+
+                            // Copy the received bytes into the videoFile's videosByte array
+                            Array.Copy(videoFileBuffer, 0, videoFile.videosByte, totalBytesReceived - bytesReceived, bytesReceived);
+
+                            //consumer.LogMessage($"[SERVER]: Received {bytesReceived} bytes. Total bytes received: {totalBytesReceived} of {fileSize}");
+
+                            // If part of the video is uploaded and it hasn't been queued yet
+                            if (!isVideoQueued)
+                            {
+                                lock (Queue.videoQueue) // Ensure only one thread can enqueue at a time
+                                {
+                                    if (Queue.videoQueue.Count >= ConfigParameter.nMaxQueueLength)
+                                    {
+                                        consumer.LogMessage("[SERVER]: Queue full! Video skipped...");
+                                    }
+                                    else
+                                    {
+                                        Queue.videoQueue.Enqueue(videoFile); // Enqueue the video object
+                                        consumer.LogMessage($"[SERVER]: Video enqueued. Queue size: {Queue.videoQueue.Count}");
+                                    }
+                                }
+                                isVideoQueued = true; // Prevent requeuing the same video file
+                            }
                         }
-                        totalBytesReceived += bytesReceived;
-                        consumer.LogMessage($"[SERVER]: Received {bytesReceived} bytes. Total so far: {totalBytesReceived}/{fileSize}");
-                    }
-
-                    if (totalBytesReceived == fileSize)
-                    {
-                        consumer.LogMessage("[SERVER]: Video file received successfully.");
-
-                        // Save the received video file
-                        string fileName = "received_video_" + DateTime.Now.Ticks + ".mp4"; // Use timestamp to ensure unique file names
-                        string filePath = Path.Combine(saveDirectory, fileName);
-                        await File.WriteAllBytesAsync(filePath, videoFileBuffer);
-                        consumer.LogMessage("[SERVER]: Video file saved at " + filePath);
                     }
                     else
                     {
-                        consumer.LogMessage("[SERVER]: Error: File size mismatch. Received: " + totalBytesReceived + " bytes, Expected: " + fileSize + " bytes.");
+                        consumer.LogMessage("[SERVER]: Connection closed by client.");
+                        break;
                     }
                 }
             }

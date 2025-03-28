@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -13,6 +14,7 @@ namespace Producer.Configuration
     public struct ConfigParameter
     {
         public static int nProducerThreads;
+        public static int nMaxQLength;
     }
 
     // Class for storing folder related information
@@ -28,4 +30,5 @@ namespace Producer.Configuration
         public static List<Socket> clientSocket = new List<Socket>();
         public static Socket selectedSocket;
     }
+
 }

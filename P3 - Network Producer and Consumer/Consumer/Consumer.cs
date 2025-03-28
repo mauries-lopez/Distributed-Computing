@@ -52,12 +52,54 @@ namespace Project
             int successChecks = 0;
 
             // Retrieve inputs from the UI
-            string tempNumThreads = numThreadsInput.Text;
+            List<TextBox> parameters = [numThreadsInput, maxQueueLengthInput];
+
+            // Validate input
+            foreach (TextBox param in parameters)
+            {
+                var returnedValues = validateInput(param.Text);
+                //returnedValues.Item1 = layersPassed
+                //returnedValues.Item2 = converted string to int
+
+                // Button Change UI if all check layers passed
+                if (returnedValues.Item1 == 2)
+                {
+                    if (param.Name == "numThreadsInput")
+                    {
+                        ConfigParameter.nConsumerThreads = returnedValues.Item2;
+                        LogMessage("[SYSTEM]: Successfully initialized " + ConfigParameter.nConsumerThreads + " consumer thread/s.");
+                    }
+                    else if (param.Name == "maxQueueLengthInput")
+                    {
+                        ConfigParameter.nMaxQueueLength = returnedValues.Item2;
+                        LogMessage("[SYSTEM]: Successfully initialized " + ConfigParameter.nMaxQueueLength + " max queue length.");
+                    }
+
+                    // UI
+                    threadInputLabel.Visible = false;
+
+                    // Button UI
+                    mainBtn.Visible = false;
+
+                    // Hide Input UI
+                    numThreadsInput.Visible = false;
+                    maxQueueLengthLabel.Visible = false;
+                    maxQueueLengthInput.Visible = false;
+                }
+            }
+        }
+
+        private (int, int) validateInput(string input)
+        {
+            // Initialize layer of checking
+            int successChecks = 0;
 
             // Convert tempNumThreads to Integer (https://stackoverflow.com/questions/2344411/how-to-convert-string-to-integer-in-c-sharp)
             int i = 0;
             int intNumThreads = 0;
-            bool isSuccessConvert = int.TryParse(tempNumThreads, out i);
+            bool isSuccessConvert = int.TryParse(input, out i);
+
+            // 1st Layer
             if (isSuccessConvert == false)
             {
                 LogMessage("[SYSTEM ERROR]: " + i + " - Invalid Input. Only numerical values are allowed.");
@@ -65,9 +107,10 @@ namespace Project
             else
             {
                 successChecks++; // 1st layer of check
-                intNumThreads = int.Parse(tempNumThreads); // Convert to integer
+                intNumThreads = int.Parse(input); // Convert to integer
             }
 
+            // 2nd Layer
             // Check for validation
             if (intNumThreads <= 0 && isSuccessConvert == true) // Check for negative values
             {
@@ -82,24 +125,7 @@ namespace Project
                 successChecks++;
             }
 
-            // Button Change UI if all check layers passed
-            if (successChecks == 2)
-            {
-                // Create struct to contain the parameter
-                ConfigParameter configParameter = new ConfigParameter();
-
-                configParameter.nConsumerThreads = intNumThreads;
-
-                LogMessage("[SYSTEM]: Successfully initialized to " + configParameter.nConsumerThreads + " consumer thread/s.");
-
-                // Button UI
-                mainBtn.Enabled = false;  // Grey out button
-                mainBtn.Text = "UPLOAD"; // Change to upload text
-
-                // Hide Input UI
-                threadInputLabel.Visible = false;
-                numThreadsInput.Visible = false;
-            }
+            return (successChecks, intNumThreads);
         }
 
         // INITIALIZE/UPLOAD button click event listener
@@ -113,11 +139,6 @@ namespace Project
 
             // Connect To Server
             Client.Client.ConnectToServer(this); //Server folder -> Server.cs -> Function
-        }
-
-        internal void AddUIDTitle(Socket sender)
-        {
-            throw new NotImplementedException();
         }
     }
 }
