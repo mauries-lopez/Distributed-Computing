@@ -87,6 +87,9 @@ static void viewStatus() {
 		}
 	}
 
+	// Sleep again to make sure everything is prepared
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
 	// Clear the console to "refresh" the view
 	system("clear"); // For Linux/Unix, or use "cls" for Windows
 
