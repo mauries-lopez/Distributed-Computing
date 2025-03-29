@@ -9,8 +9,6 @@ namespace Project.Client
 {
     internal class Client
     {
-        private static int videoID;
-
         public static async void ConnectToServer(Consumer consumer)
         {
             string serverIpAddress = consumer.RetrieveIPAddress(); // Replace with the actual IPv4 address of HOST (cmd -> ipconfig -> copy ipv4 address)
@@ -91,19 +89,26 @@ namespace Project.Client
         public static void StartVideoProcessingTask(Consumer consumer, string saveDirectory)
         {
             // Set the maximum number of threads in the thread pool to the value defined in the configuration
-            ThreadPool.SetMaxThreads(ConfigParameter.nConsumerThreads, ConfigParameter.nConsumerThreads);
+            //ThreadPool.SetMaxThreads(ConfigParameter.nConsumerThreads, ConfigParameter.nConsumerThreads);
 
             for (int i = 0; i < ConfigParameter.nConsumerThreads; i++)
             {
+                /*
                 // For each thread, run the StartProcessingVideo method
                 Task.Run(() =>
                 {
-                    StartProcessingVideo(consumer, saveDirectory);
+                    StartProcessingVideo(consumer, saveDirectory, i);
                 });
+                */
+
+                Thread thread = new Thread(() => StartProcessingVideo(consumer, saveDirectory, i));
+                thread.IsBackground = true; // Make it a background thread
+                thread.Start();
             }
         }
 
-        private static void StartProcessingVideo(Consumer consumer, string saveDirectory)
+        private static object fileWriteLock = new object();
+        private static void StartProcessingVideo(Consumer consumer, string saveDirectory, int threadID)
         {
             while (true)
             {
@@ -124,13 +129,15 @@ namespace Project.Client
                 if (completedVideo.HasValue)
                 {
                     // Process the dequeued video (e.g., save it to a file)
-                    string fileName = $"video_{videoID}_{DateTime.Now.Ticks}.mp4";
+                    string fileName = $"video_{DateTime.Now.Ticks}.mp4";
                     string filePath = Path.Combine(saveDirectory, fileName);
 
-                    File.WriteAllBytes(filePath, completedVideo.Value.videosByte); // Save video to disk
-
-                    consumer.LogMessage($"[SERVER]: Video saved at {filePath}.");
-                    videoID++; // Increment video ID after processing
+                    lock (fileWriteLock)
+                    {
+                        consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Downloading received video...");
+                        File.WriteAllBytes(filePath, completedVideo.Value.videosByte); // Save video to disk
+                        consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Video successfully saved at {filePath}");
+                    }
                 }
             }
         }
@@ -186,7 +193,7 @@ namespace Project.Client
                             //consumer.LogMessage($"[SERVER]: Received {bytesReceived} bytes. Total bytes received: {totalBytesReceived} of {fileSize}");
 
                             // If part of the video is uploaded and it hasn't been queued yet
-                            if (!isVideoQueued)
+                            if (!isVideoQueued && totalBytesReceived == fileSize)
                             {
                                 lock (Queue.videoQueue) // Ensure only one thread can enqueue at a time
                                 {
@@ -197,7 +204,7 @@ namespace Project.Client
                                     else
                                     {
                                         Queue.videoQueue.Enqueue(videoFile); // Enqueue the video object
-                                        consumer.LogMessage($"[SERVER]: Video enqueued. Queue size: {Queue.videoQueue.Count}");
+                                        //consumer.LogMessage($"[SERVER]: Video enqueued. Queue size: {Queue.videoQueue.Count}");
                                     }
                                 }
                                 isVideoQueued = true; // Prevent requeuing the same video file
