@@ -22,6 +22,6 @@ namespace Producer.Configuration
 
     public struct Queue
     {
-        public static Queue<Video> videoQueue = new Queue<Video>();
+        public static Queue<byte[]> videoQueue = new Queue<byte[]>();
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics.Eventing.Reader;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using Producer.Configuration;
 
 namespace Project.Client
@@ -88,19 +86,8 @@ namespace Project.Client
 
         public static void StartVideoProcessingTask(Consumer consumer, string saveDirectory)
         {
-            // Set the maximum number of threads in the thread pool to the value defined in the configuration
-            //ThreadPool.SetMaxThreads(ConfigParameter.nConsumerThreads, ConfigParameter.nConsumerThreads);
-
             for (int i = 0; i < ConfigParameter.nConsumerThreads; i++)
             {
-                /*
-                // For each thread, run the StartProcessingVideo method
-                Task.Run(() =>
-                {
-                    StartProcessingVideo(consumer, saveDirectory, i);
-                });
-                */
-
                 Thread thread = new Thread(() => StartProcessingVideo(consumer, saveDirectory, i));
                 thread.IsBackground = true; // Make it a background thread
                 thread.Start();
@@ -112,7 +99,7 @@ namespace Project.Client
         {
             while (true)
             {
-                Video? completedVideo = null;
+                byte[] videoFileBytes = null;
 
                 // Lock to safely dequeue the video
                 lock (Queue.videoQueue)
@@ -120,13 +107,13 @@ namespace Project.Client
                     // Check if there's any video to dequeue
                     if (Queue.videoQueue.Count > 0)
                     {
-                        completedVideo = Queue.videoQueue.Dequeue(); // Dequeue the completed video
+                        videoFileBytes = Queue.videoQueue.Dequeue(); // Dequeue the completed video
                         //consumer.LogMessage($"[SERVER]: Video dequeued. Queue size: {Queue.videoQueue.Count}");
                     }
                 }
 
                 // If a video was dequeued, process it outside the lock
-                if (completedVideo.HasValue)
+                if (videoFileBytes != null)
                 {
                     // Process the dequeued video (e.g., save it to a file)
                     string fileName = $"video_{DateTime.Now.Ticks}.mp4";
@@ -135,7 +122,7 @@ namespace Project.Client
                     lock (fileWriteLock)
                     {
                         consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Downloading received video...");
-                        File.WriteAllBytes(filePath, completedVideo.Value.videosByte); // Save video to disk
+                        File.WriteAllBytes(filePath, videoFileBytes); // Save video to disk
                         consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Video successfully saved at {filePath}");
                     }
                 }
@@ -163,52 +150,42 @@ namespace Project.Client
                     // If sizeBytesReceived contains a value, it means there's a video being received.
                     if (sizeBytesReceived > 0)
                     {
-                        // Retrieve the video file size
+                        // Retrieve the video file
                         long fileSize = BitConverter.ToInt64(videoFileSize, 0);
                         byte[] videoFileBuffer = new byte[fileSize];
                         long totalBytesReceived = 0;
 
-                        // Create video object
-                        Video videoFile = new Video();
-                        videoFile.videosByte = new byte[fileSize]; // This will create the buffer for the video.
-
-                        bool isVideoQueued = false;
-
+                        // Receive the video file in chunks until all bytes are received
                         while (totalBytesReceived < fileSize)
                         {
-                            int bytesReceived = sender.Receive(videoFileBuffer, (int)totalBytesReceived, (int)(fileSize - totalBytesReceived), SocketFlags.None); // Synchronous receive
-
+                            int bytesReceived = sender.Receive(videoFileBuffer, (int)totalBytesReceived, (int)(fileSize - totalBytesReceived), SocketFlags.None);
                             if (bytesReceived == 0)
                             {
-                                consumer.LogMessage("[SERVER]: Connection closed unexpectedly while receiving the file.");
+                                consumer.LogMessage("[SERVER]: Connection closed unexpectedly while receiving file.");
                                 break;
                             }
-
-                            // Update the total bytes received
                             totalBytesReceived += bytesReceived;
+                            //consumer.LogMessage($"[SERVER]: Received {bytesReceived} bytes. Total so far: {totalBytesReceived}/{fileSize}");
+                        }
 
-                            // Copy the received bytes into the videoFile's videosByte array
-                            Array.Copy(videoFileBuffer, 0, videoFile.videosByte, totalBytesReceived - bytesReceived, bytesReceived);
-
-                            //consumer.LogMessage($"[SERVER]: Received {bytesReceived} bytes. Total bytes received: {totalBytesReceived} of {fileSize}");
-
-                            // If part of the video is uploaded and it hasn't been queued yet
-                            if (!isVideoQueued && totalBytesReceived == fileSize)
+                        if (totalBytesReceived == fileSize)
+                        {
+                            lock (Queue.videoQueue)
                             {
-                                lock (Queue.videoQueue) // Ensure only one thread can enqueue at a time
+                                if (Queue.videoQueue.Count >= ConfigParameter.nMaxQueueLength)
                                 {
-                                    if (Queue.videoQueue.Count >= ConfigParameter.nMaxQueueLength)
-                                    {
-                                        consumer.LogMessage("[SERVER]: Queue full! Video skipped...");
-                                    }
-                                    else
-                                    {
-                                        Queue.videoQueue.Enqueue(videoFile); // Enqueue the video object
-                                        //consumer.LogMessage($"[SERVER]: Video enqueued. Queue size: {Queue.videoQueue.Count}");
-                                    }
+                                    consumer.LogMessage("[SERVER]: Queue full! Video skipped...");
                                 }
-                                isVideoQueued = true; // Prevent requeuing the same video file
+                                else
+                                {
+                                    Queue.videoQueue.Enqueue(videoFileBuffer);
+                                    consumer.LogMessage("[SERVER]: Video queued...");
+                                }
                             }
+                        }
+                        else
+                        {
+                            consumer.LogMessage("[SERVER]: Error: File size mismatch. Received: " + totalBytesReceived + " bytes, Expected: " + fileSize + " bytes.");
                         }
                     }
                     else

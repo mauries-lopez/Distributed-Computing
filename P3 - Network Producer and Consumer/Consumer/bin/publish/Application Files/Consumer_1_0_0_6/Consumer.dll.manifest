@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="Consumer.exe" version="1.0.0.5" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="Consumer.exe" version="1.0.0.6" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <application />
   <entryPoint>
     <assemblyIdentity name="Launcher" version="8.0.0.0" language="neutral" processorArchitecture="msil" />
@@ -62,22 +62,22 @@
       <dsig:DigestValue>agVKd/cHTNJYp81gn2xWVdopLX/irHqzWucv8cmYbac=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Consumer.dll" size="20480">
+  <file name="Consumer.dll" size="18944">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>kDusoeTWrTVWxI2G+wefI4XD7+xG+JaZD5dbPIY6DW0=</dsig:DigestValue>
+      <dsig:DigestValue>+rE1iqw/fU/uksSfUzSKm9ant0knKUfIbXC51Z0qgIA=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Consumer.exe" size="142848">
+  <file name="Consumer.exe" size="142336">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>duXXlzay4GcVBS4d6FdMb6Gh0UL6CUzgAtpFWz4gPD4=</dsig:DigestValue>
+      <dsig:DigestValue>wJR0s410MPea5zSm3jOdJhxqwXozzu72vBZqFA6+HiU=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Consumer.runtimeconfig.json" size="458">
