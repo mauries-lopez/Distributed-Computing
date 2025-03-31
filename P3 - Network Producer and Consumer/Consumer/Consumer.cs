@@ -1,4 +1,4 @@
-using System.Net.Sockets;
+using System.Diagnostics;
 using Producer.Configuration;
 
 namespace Project
@@ -25,12 +25,13 @@ namespace Project
         }
 
         // Add application title to contain unique identifier
-        public void AddUIDTitle (string uniqueConnection)
+        public void AddUIDTitle(string uniqueConnection)
         {
-            if ( this.InvokeRequired )
+            if (this.InvokeRequired)
             {
                 this.Invoke(new Action(() => AddUIDTitle(uniqueConnection)));
-            } else
+            }
+            else
             {
                 this.Text = "Consumer (" + uniqueConnection + ")";
             }
@@ -40,7 +41,6 @@ namespace Project
         {
             // Disable UI
             ipAddressInput.Visible = false;
-            ipAddressLabel.Visible = false;
 
             return ipAddressInput.Text;
         }
@@ -74,9 +74,6 @@ namespace Project
                         ConfigParameter.nMaxQueueLength = returnedValues.Item2;
                         LogMessage("[SYSTEM]: Successfully initialized " + ConfigParameter.nMaxQueueLength + " max queue length.");
                     }
-
-                    // UI
-                    threadInputLabel.Visible = false;
 
                     // Button UI
                     mainBtn.Visible = false;
@@ -137,8 +134,151 @@ namespace Project
             // Retrieve IPv4
             RetrieveIPAddress();
 
+            // Load all Video UI related
+            LoadVideoUI();
+
             // Connect To Server
             Client.Client.ConnectToServer(this); //Server folder -> Server.cs -> Function
+        }
+
+        private void LoadVideoUI()
+        {
+            // Disable UI
+            ipAddressInput.Visible = false;
+            mainBtn.Visible = false;
+            maxQueueLengthInput.Visible = false;
+            numThreadsInput.Visible = false;
+
+            // Enable Video UI
+            thumbnailListView.Visible = true;
+            windowsMediaPlayer.Visible = true;
+
+            threadInputLabel.Text = "Downloaded Video(s):";
+            ipAddressLabel.Text = "Video Preview:";
+
+            //https://stackoverflow.com/questions/17381725/c-sharp-listview-item-image
+            // Preload the ImageList settings
+            thumbnailImageList.ImageSize = new Size(80, 70); // Change size as needed
+
+            Thread thread = new Thread(() => GetThumbnails());
+            thread.IsBackground = true; // Make it a background thread
+            thread.Start();
+        }
+
+        //https://www.youtube.com/watch?v=H8VApsezaZM
+        private void GetThumbnails()
+        {
+            string desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string saveFolderDirectory = Path.Combine(desktopDirectory, "Received");
+            string thumbnailsDir = Path.Combine(saveFolderDirectory, "thumbnails");
+
+            List<string> loadedImages = new List<string>(); // Track loaded images
+
+            while (true)
+            {
+                try
+                {
+                    if (Directory.Exists(thumbnailsDir))
+                    {
+                        string[] paths = Directory.GetFiles(thumbnailsDir);
+
+                        foreach (string path in paths)
+                        {
+                            if (!loadedImages.Contains(path)) // Prevent duplicate loading
+                            {
+                                loadedImages.Add(path);
+                                Image img = Image.FromFile(path);
+                                string fileName = Path.GetFileName(path);
+
+                                // Ensure UI updates happen on the main thread
+                                if (thumbnailListView.InvokeRequired)
+                                {
+                                    thumbnailListView.Invoke((MethodInvoker)delegate
+                                    {
+                                        thumbnailImageList.Images.Add(img);
+                                        thumbnailListView.LargeImageList = thumbnailImageList;
+                                        thumbnailListView.Items.Add(new ListViewItem { Text = fileName, ImageIndex = thumbnailImageList.Images.Count - 1 });
+                                        thumbnailListView.Refresh();
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogMessage($"[SYSTEM ERROR]: {ex}");
+                }
+            }
+        }
+
+        // Function used to generate a thumbnail in "thumbnail" folder for every successfully downloaded video.
+        public void GenerateThumbnail(string videoPath, string thumbnailPath, int timeInSeconds = 5)
+        {
+            if (!File.Exists(videoPath))
+            {
+                throw new FileNotFoundException("Video file not found.");
+            }
+
+            string ffmpegPath = "ffmpeg";
+
+            // FFmpeg command to extract a frame
+            string arguments = $"-i \"{videoPath}\" -ss {timeInSeconds} -vframes 1 \"{thumbnailPath}\"";
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = ffmpegPath,
+                Arguments = arguments,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using (Process process = new Process { StartInfo = startInfo })
+            {
+                process.Start();
+                process.WaitForExit();
+            }
+        }
+
+        //https://www.youtube.com/watch?v=5jahCtOQI1k&t=211s
+        private void thumbnailListView_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Ensure that an item is actually selected
+            if (thumbnailListView.SelectedItems.Count == 0)
+            {
+                return;
+            }
+
+            // Get the first selected item
+            ListViewItem selectedItem = thumbnailListView.SelectedItems[0];
+
+            if (selectedItem != null)
+            {
+                string fileName = selectedItem.Text;
+                //LogMessage($"[SYSTEM]: {fileName} is selected...");
+
+                foreach (var video in CollectionVideoList.collectionVideoList)
+                {
+                    if (video.thumbnailFileName == fileName)
+                    {
+                        string videoPath = video.videoFilePath;
+
+                        // Ensure the video file exists before playing
+                        if (File.Exists(videoPath))
+                        {
+                            windowsMediaPlayer.URL = videoPath;
+                            windowsMediaPlayer.Ctlcontrols.play(); // Explicitly start playback
+                        }
+                        else
+                        {
+                            LogMessage($"[ERROR]: Video file not found - {videoPath}");
+                        }
+                        break;
+                    }
+                }
+            }
         }
     }
 }

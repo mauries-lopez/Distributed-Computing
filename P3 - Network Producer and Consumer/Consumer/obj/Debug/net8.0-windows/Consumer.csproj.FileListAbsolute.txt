@@ -14,3 +14,8 @@ C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\obj\Debug\net8.0-windows\Consumer.pdb
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\obj\Debug\net8.0-windows\Consumer.genruntimeconfig.cache
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\obj\Debug\net8.0-windows\ref\Consumer.dll
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Debug\net8.0-windows\Interop.WMPLib.dll
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Debug\net8.0-windows\AxInterop.WMPLib.dll
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\obj\Debug\net8.0-windows\Interop.WMPLib.dll
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\obj\Debug\net8.0-windows\AxInterop.WMPLib.dll
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\obj\Debug\net8.0-windows\Consumer.csproj.ResolveComReference.cache

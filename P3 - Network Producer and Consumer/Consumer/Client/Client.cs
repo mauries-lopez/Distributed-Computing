@@ -59,7 +59,7 @@ namespace Project.Client
                 StartReceivingInBackground(sender, consumer, saveFolderDirectory);
 
                 // Start processing the queue
-                StartVideoProcessingTask(consumer, saveFolderDirectory);
+                StartVideoProcessingTask(sender, consumer, saveFolderDirectory);
             }
             catch (Exception ex)
             {
@@ -79,23 +79,36 @@ namespace Project.Client
         private static void StartReceivingInBackground(Socket sender, Consumer consumer, string saveDirectory)
         {
             // Create a new thread and start it
+            
             Thread thread = new Thread(() => KeepReceivingVideo(sender, consumer, saveDirectory));
             thread.IsBackground = true; // Make it a background thread
             thread.Start();
+            
+            //Task.Run(() => KeepReceivingVideo(sender, consumer, saveDirectory)); // Uses ThreadPool
         }
 
-        public static void StartVideoProcessingTask(Consumer consumer, string saveDirectory)
+        public static void StartVideoProcessingTask(Socket sender, Consumer consumer, string saveDirectory)
         {
+            /*
             for (int i = 0; i < ConfigParameter.nConsumerThreads; i++)
             {
-                Thread thread = new Thread(() => StartProcessingVideo(consumer, saveDirectory, i));
+                Thread thread = new Thread(() => StartProcessingVideo(sender, consumer, saveDirectory, i));
                 thread.IsBackground = true; // Make it a background thread
                 thread.Start();
+            }
+            */
+            for (int i = 0; i < ConfigParameter.nConsumerThreads; i++)
+            {
+                int threadIndex = i; // Capture loop variable
+                ThreadPool.QueueUserWorkItem(state =>
+                {
+                    StartProcessingVideo(sender, consumer, saveDirectory, threadIndex);
+                });
             }
         }
 
         private static object fileWriteLock = new object();
-        private static void StartProcessingVideo(Consumer consumer, string saveDirectory, int threadID)
+        private static void StartProcessingVideo(Socket sender, Consumer consumer, string saveDirectory, int threadID)
         {
             while (true)
             {
@@ -121,8 +134,28 @@ namespace Project.Client
 
                     lock (fileWriteLock)
                     {
+                        Video video = new Video();
+                        
                         consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Downloading received video...");
                         File.WriteAllBytes(filePath, videoFileBytes); // Save video to disk
+
+                        video.videoFilePath = filePath;
+
+                        // Ensure the 'thumbnails' directory exists inside saveDirectory
+                        string thumbnailsDir = Path.Combine(saveDirectory, "thumbnails");
+                        if (!Directory.Exists(thumbnailsDir))
+                        {
+                            Directory.CreateDirectory(thumbnailsDir);
+                        }
+
+                        // Generate thumbnail inside the 'thumbnails' directory
+                        string thumbnailPath = Path.Combine(thumbnailsDir, $"{Path.GetFileNameWithoutExtension(fileName)}.jpg");
+                        consumer.GenerateThumbnail(filePath, thumbnailPath);
+
+                        video.thumbnailFileName = $"{Path.GetFileNameWithoutExtension(fileName)}.jpg";
+
+                        CollectionVideoList.collectionVideoList.Add(video);
+
                         consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Video successfully saved at {filePath}");
                     }
                 }

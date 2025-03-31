@@ -3,3 +3,5 @@ C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Consumer.deps.json
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Consumer.runtimeconfig.json
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Consumer.pdb
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Interop.WMPLib.dll
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\AxInterop.WMPLib.dll

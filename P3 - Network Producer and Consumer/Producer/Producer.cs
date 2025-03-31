@@ -150,10 +150,10 @@ namespace Project
             // We are using a ThreadPool library that is already provided by C# 
             // https://medium.com/@fairushyn/mastering-thread-pooling-in-c-37f538f6e649
             ThreadPool.SetMaxThreads(ConfigParameter.nProducerThreads, ConfigParameter.nProducerThreads); // This does not set the number of threads the thread pool contains; it only limits the number of threads the thread pool can use.
-
-            foreach (string folderPath in ConfigFolders.foldersFilePath)
+            while (ConfigFolders.foldersFilePath.Count != 0)
             {
-                ThreadPool.QueueUserWorkItem(new WaitCallback(UploadFolder), folderPath);
+                ThreadPool.QueueUserWorkItem(new WaitCallback(UploadFolder), ConfigFolders.foldersFilePath[0]); // Always access the first element
+                ConfigFolders.foldersFilePath.RemoveAt(0); // Remove the first element
             }
 
             // Disable Upload BTN until file/s upload complete

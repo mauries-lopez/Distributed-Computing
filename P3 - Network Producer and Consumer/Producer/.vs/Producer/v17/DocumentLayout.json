@@ -3,25 +3,27 @@
   "WorkspaceRootPath": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\server\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|solutionrelative:server\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\producer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|c:\\personal files\\dlsu 4thyr 2nd term\\stdiscm\\problem sets\\p3 - network producer and consumer\\producer\\producer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|solutionrelative:producer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{63086132-115E-4BFA-B8D9-CF355D10F4E1}|..\\Consumer\\Consumer.csproj|c:\\personal files\\dlsu 4thyr 2nd term\\stdiscm\\problem sets\\p3 - network producer and consumer\\consumer\\client\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{63086132-115E-4BFA-B8D9-CF355D10F4E1}|..\\Consumer\\Consumer.csproj|c:\\personal files\\dlsu 4thyr 2nd term\\stdiscm\\problem sets\\p3 - network producer and consumer\\consumer\\configuration\\config.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|c:\\personal files\\dlsu 4thyr 2nd term\\stdiscm\\problem sets\\p3 - network producer and consumer\\producer\\server\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|solutionrelative:server\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{63086132-115E-4BFA-B8D9-CF355D10F4E1}|..\\Consumer\\Consumer.csproj|c:\\personal files\\dlsu 4thyr 2nd term\\stdiscm\\problem sets\\p3 - network producer and consumer\\consumer\\consumer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\configuration\\config.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|solutionrelative:configuration\\config.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{63086132-115E-4BFA-B8D9-CF355D10F4E1}|..\\Consumer\\Consumer.csproj|c:\\personal files\\dlsu 4thyr 2nd term\\stdiscm\\problem sets\\p3 - network producer and consumer\\consumer\\client\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{63086132-115E-4BFA-B8D9-CF355D10F4E1}|..\\Consumer\\Consumer.csproj|c:\\personal files\\dlsu 4thyr 2nd term\\stdiscm\\problem sets\\p3 - network producer and consumer\\consumer\\consumer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{63086132-115E-4BFA-B8D9-CF355D10F4E1}|..\\Consumer\\Consumer.csproj|c:\\personal files\\dlsu 4thyr 2nd term\\stdiscm\\problem sets\\p3 - network producer and consumer\\consumer\\consumer.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{63086132-115E-4BFA-B8D9-CF355D10F4E1}|..\\Consumer\\Consumer.csproj|c:\\personal files\\dlsu 4thyr 2nd term\\stdiscm\\problem sets\\p3 - network producer and consumer\\consumer\\configuration\\config.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,88 +33,95 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Client.cs",
               "DocumentMoniker": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Consumer\\Client\\Client.cs",
               "RelativeDocumentMoniker": "..\\Consumer\\Client\\Client.cs",
               "ToolTip": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Consumer\\Client\\Client.cs",
               "RelativeToolTip": "..\\Consumer\\Client\\Client.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAFcAAAAJAAAA",
+              "ViewState": "AQIAAIcAAAAAAAAAAAAmwHgAAAAzAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-28T12:08:03.351Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-31T06:12:11.274Z",
+              "IsPinned": true
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Config.cs",
-              "DocumentMoniker": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Consumer\\Configuration\\Config.cs",
-              "RelativeDocumentMoniker": "..\\Consumer\\Configuration\\Config.cs",
-              "ToolTip": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Consumer\\Configuration\\Config.cs",
-              "RelativeToolTip": "..\\Consumer\\Configuration\\Config.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABgAAAAiAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-28T12:08:08.032Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Config.cs",
-              "DocumentMoniker": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\Configuration\\Config.cs",
-              "RelativeDocumentMoniker": "Configuration\\Config.cs",
-              "ToolTip": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\Configuration\\Config.cs",
-              "RelativeToolTip": "Configuration\\Config.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-28T12:07:36.383Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "Consumer.cs",
               "DocumentMoniker": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Consumer\\Consumer.cs",
               "RelativeDocumentMoniker": "..\\Consumer\\Consumer.cs",
               "ToolTip": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Consumer\\Consumer.cs",
               "RelativeToolTip": "..\\Consumer\\Consumer.cs",
-              "ViewState": "AQIAAAUAAAAAAAAAAAA4wBcAAAANAAAA",
+              "ViewState": "AQIAAK0AAAAAAAAAAAAcwMwAAAAZAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-30T11:26:21.804Z",
+              "WhenOpened": "2025-03-31T06:03:43.425Z",
+              "IsPinned": true,
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Server.cs",
-              "DocumentMoniker": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\Server\\Server.cs",
-              "RelativeDocumentMoniker": "Server\\Server.cs",
-              "ToolTip": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\Server\\Server.cs",
-              "RelativeToolTip": "Server\\Server.cs",
-              "ViewState": "AQIAADAAAAAAAAAAAAAowEwAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-29T04:57:23.345Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "Producer.cs",
               "DocumentMoniker": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\Producer.cs",
               "RelativeDocumentMoniker": "Producer.cs",
               "ToolTip": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\Producer.cs",
               "RelativeToolTip": "Producer.cs",
-              "ViewState": "AQIAAL8AAAAAAAAAAAAAwJcAAABpAAAA",
+              "ViewState": "AQIAAI0AAAAAAAAAAAAawKQAAABAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-28T13:57:32.922Z",
+              "WhenOpened": "2025-03-31T17:08:23.784Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Server.cs",
+              "DocumentMoniker": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\Server\\Server.cs",
+              "RelativeDocumentMoniker": "Server\\Server.cs",
+              "ToolTip": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\Server\\Server.cs",
+              "RelativeToolTip": "Server\\Server.cs",
+              "ViewState": "AQIAACIAAAAAAAAAAAAgwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-31T17:08:13.999Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Consumer.Designer.cs",
+              "DocumentMoniker": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Consumer\\Consumer.Designer.cs",
+              "RelativeDocumentMoniker": "..\\Consumer\\Consumer.Designer.cs",
+              "ToolTip": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Consumer\\Consumer.Designer.cs",
+              "RelativeToolTip": "..\\Consumer\\Consumer.Designer.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABcAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-31T09:05:31.221Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Consumer.cs [Design]",
+              "DocumentMoniker": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Consumer\\Consumer.cs",
+              "RelativeDocumentMoniker": "..\\Consumer\\Consumer.cs",
+              "ToolTip": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Consumer\\Consumer.cs [Design]",
+              "RelativeToolTip": "..\\Consumer\\Consumer.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-31T08:46:59.115Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Config.cs",
+              "DocumentMoniker": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Consumer\\Configuration\\Config.cs",
+              "RelativeDocumentMoniker": "..\\Consumer\\Configuration\\Config.cs",
+              "ToolTip": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Consumer\\Configuration\\Config.cs",
+              "RelativeToolTip": "..\\Consumer\\Configuration\\Config.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAnAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-31T08:09:21.204Z"
             }
           ]
         }

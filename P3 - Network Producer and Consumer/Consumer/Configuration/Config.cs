@@ -17,7 +17,13 @@ namespace Producer.Configuration
 
     public struct Video
     {
-        public byte[] videosByte;
+        public string videoFilePath;
+        public string thumbnailFileName;
+    }
+
+    public struct CollectionVideoList
+    {
+        public static List<Video> collectionVideoList = new List<Video>();
     }
 
     public struct Queue

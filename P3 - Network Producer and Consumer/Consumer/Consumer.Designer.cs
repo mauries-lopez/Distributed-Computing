@@ -1,4 +1,5 @@
-﻿namespace Project
+﻿
+namespace Project
 {
     partial class Consumer
     {
@@ -28,6 +29,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Consumer));
             logBox = new TextBox();
             numThreadsInput = new TextBox();
             threadInputLabel = new Label();
@@ -36,6 +39,10 @@
             ipAddressInput = new TextBox();
             maxQueueLengthLabel = new Label();
             maxQueueLengthInput = new TextBox();
+            thumbnailListView = new ListView();
+            thumbnailImageList = new ImageList(components);
+            windowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
+            ((System.ComponentModel.ISupportInitialize)windowsMediaPlayer).BeginInit();
             SuspendLayout();
             // 
             // logBox
@@ -126,11 +133,43 @@
             maxQueueLengthInput.TabIndex = 8;
             maxQueueLengthInput.WordWrap = false;
             // 
+            // thumbnailListView
+            // 
+            thumbnailListView.Activation = ItemActivation.OneClick;
+            thumbnailListView.Alignment = ListViewAlignment.Default;
+            thumbnailListView.HoverSelection = true;
+            thumbnailListView.Location = new Point(12, 36);
+            thumbnailListView.MultiSelect = false;
+            thumbnailListView.Name = "thumbnailListView";
+            thumbnailListView.Size = new Size(397, 93);
+            thumbnailListView.TabIndex = 11;
+            thumbnailListView.UseCompatibleStateImageBehavior = false;
+            thumbnailListView.Visible = false;
+            thumbnailListView.SelectedIndexChanged += thumbnailListView_SelectedIndexChanged;
+            // 
+            // thumbnailImageList
+            // 
+            thumbnailImageList.ColorDepth = ColorDepth.Depth32Bit;
+            thumbnailImageList.ImageSize = new Size(16, 16);
+            thumbnailImageList.TransparentColor = Color.Transparent;
+            // 
+            // windowsMediaPlayer
+            // 
+            windowsMediaPlayer.Enabled = true;
+            windowsMediaPlayer.Location = new Point(12, 156);
+            windowsMediaPlayer.Name = "windowsMediaPlayer";
+            windowsMediaPlayer.OcxState = (AxHost.State)resources.GetObject("windowsMediaPlayer.OcxState");
+            windowsMediaPlayer.Size = new Size(397, 282);
+            windowsMediaPlayer.TabIndex = 12;
+            windowsMediaPlayer.Visible = false;
+            // 
             // Consumer
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(windowsMediaPlayer);
+            Controls.Add(thumbnailListView);
             Controls.Add(maxQueueLengthInput);
             Controls.Add(maxQueueLengthLabel);
             Controls.Add(ipAddressInput);
@@ -145,6 +184,7 @@
             Name = "Consumer";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Consumer";
+            ((System.ComponentModel.ISupportInitialize)windowsMediaPlayer).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -159,5 +199,10 @@
         private TextBox ipAddressInput;
         private Label maxQueueLengthLabel;
         private TextBox maxQueueLengthInput;
+        private ImageList thumbnailList;
+        private ListView listView1;
+        private ListView thumbnailListView;
+        private ImageList thumbnailImageList;
+        private AxWMPLib.AxWindowsMediaPlayer windowsMediaPlayer;
     }
 }

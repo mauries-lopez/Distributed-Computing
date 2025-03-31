@@ -76,12 +76,6 @@ namespace Project.Server
             }
         }
 
-        public static void SendQueueFullToClient()
-        {
-            byte[] fileData = new byte[10];
-            ClientSettings.selectedSocket.Send(fileData);
-        }
-
         private static async Task ServerListener(Producer producer, Socket listener)
         {
             try
@@ -116,6 +110,18 @@ namespace Project.Server
             SendUniqueClientSocket(clientSocket, producer);
             // You can add logic here for reading/writing data to the client.
             // For example: clientSocket.Receive(), clientSocket.Send() etc.
+
+            /*
+            // Receive message from Client
+            byte[] buffer = new byte[4096];
+            int bytesReceived = clientSocket.Receive(buffer, SocketFlags.None);
+            string clientSentData = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesReceived);
+
+            if (clientSentData == "exit")
+            {
+                clientSocket.Close();
+            }
+            */
 
             // Once communication is done, you can close the socket.
             //clientSocket.Shutdown(SocketShutdown.Both);
