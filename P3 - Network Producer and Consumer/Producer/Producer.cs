@@ -1,6 +1,7 @@
 using Producer.Configuration;
 using System.Net.Sockets;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Project
 {
@@ -9,6 +10,9 @@ namespace Project
 
         bool isFunctionLoaded = false;
         int selectedFileCount = 0;
+
+        // To limit the number of threads in the thread pool to be used.
+        Semaphore semaphore;
 
         public Producer()
         {
@@ -146,14 +150,44 @@ namespace Project
             // Disable Browse button
             browseBtn.Enabled = false;
 
+            // Show Progress Bar
+            progressBar.Visible = true;
+            progressBar.Maximum = ConfigFolders.foldersFilePath.Count();
+
             // Start distributing the threads to different folders
             // We are using a ThreadPool library that is already provided by C# 
             // https://medium.com/@fairushyn/mastering-thread-pooling-in-c-37f538f6e649
-            ThreadPool.SetMaxThreads(ConfigParameter.nProducerThreads, ConfigParameter.nProducerThreads); // This does not set the number of threads the thread pool contains; it only limits the number of threads the thread pool can use.
+
+            semaphore = new Semaphore(ConfigParameter.nProducerThreads, ConfigParameter.nProducerThreads);
+
             while (ConfigFolders.foldersFilePath.Count != 0)
             {
-                ThreadPool.QueueUserWorkItem(new WaitCallback(UploadFolder), ConfigFolders.foldersFilePath[0]); // Always access the first element
+                // Upload folder
+                string folderPath = ConfigFolders.foldersFilePath[0];
                 ConfigFolders.foldersFilePath.RemoveAt(0); // Remove the first element
+
+                ThreadPool.QueueUserWorkItem(state =>
+                {
+                    // Wait for an available slot in the semaphore (blocking)
+                    semaphore.WaitOne();
+
+                    try
+                    {
+                        Interlocked.Increment(ref ConfigParameter.taskCounter);
+                        UploadFolder(folderPath);
+                    }
+                    finally
+                    {
+                        semaphore.Release();
+                        if (progressBar.InvokeRequired)
+                        {
+                            progressBar.Invoke(new Action(() =>
+                            {
+                                progressBar.Value += 1; 
+                            }));
+                        }
+                    }
+                });
             }
 
             // Disable Upload BTN until file/s upload complete
@@ -195,9 +229,6 @@ namespace Project
         // This is the function used by the threads in ThreadPool
         // 1 thread 1 UploadFolder function -> this opens 1 folder
 
-        // Declare the barrier outside of the threads
-        private static Barrier barrier = new Barrier(ConfigParameter.nProducerThreads);
-
         // How our leaky bucket algorithm works:
         // 1. Each folder has its own thread
         // 2. Each thread will wait for each other to be ready
@@ -210,28 +241,46 @@ namespace Project
 
         private void UploadFolder(object objFolderPath)
         {
+            //LogMessage($"FIRST: {Interlocked.Read(ref ConfigParameter.taskCounter)}");
             string folderPath = objFolderPath.ToString(); // This is necessary because QueueUserWorkItem gives an object reference
 
             if (folderPath != null)
             {
                 // Open the folder
-                string[] videoFiles = Directory.GetFiles(folderPath, "*.*", SearchOption.AllDirectories)
-                                               .Where(file => file.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) ||
-                                                              file.EndsWith(".mov", StringComparison.OrdinalIgnoreCase) ||
-                                                              file.EndsWith(".avi", StringComparison.OrdinalIgnoreCase))
-                                               .ToArray();
+                List<string> videoFilePaths = new List<string>();
+                videoFilePaths.AddRange(Directory.GetFiles(folderPath, "*.*", SearchOption.AllDirectories)
+                                                 .Where(file => file.EndsWith(".mp4", StringComparison.OrdinalIgnoreCase) ||
+                                                                file.EndsWith(".mov", StringComparison.OrdinalIgnoreCase) ||
+                                                                file.EndsWith(".avi", StringComparison.OrdinalIgnoreCase))
+                                                 .ToArray());
 
-                if (videoFiles != null && videoFiles.Length > 0)
+                if (videoFilePaths != null && videoFilePaths.Count > 0)
                 {
-                    foreach (string videoFile in videoFiles)
+                    LogMessage($"[SYSTEM]: Uploading {folderPath}...");
+
+                    for (int i = videoFilePaths.Count - 1; i >= 0; i--)
                     {
-                        LogMessage($"[SYSTEM]: Uploading {videoFile} from " + folderPath);
+                        string videoFile = videoFilePaths[i];
                         SendVideoToServerFromUI(videoFile);
+
+                        // Remove uploaded video
+                        videoFilePaths.RemoveAt(i);
                     }
+                    Interlocked.Decrement(ref ConfigParameter.taskCounter);
+                    LogMessage($"[SYSTEM]: Folder Path - {folderPath} is successfully uploaded...");
+                } else
+                {
+                    Interlocked.Decrement(ref ConfigParameter.taskCounter);
+                    LogMessage($"[SYSTEM]: Folder Path - {folderPath} is successfully uploaded...");
                 }
 
-                // Read all video files format (.mp4, .mov, .avi) *common video format*
-                //LogMessage("[SYSTEM]: (" + folderPath + ") video file/s successfully uploaded!");
+                //LogMessage($"SECOND: {Interlocked.Read(ref ConfigParameter.taskCounter)}");
+                if (Interlocked.Read(ref ConfigParameter.taskCounter) == 0)
+                {
+                    // All tasks are finished, perform necessary actions
+                    LogMessage("[SYSTEM]: All folders successfully uploaded.");
+                    EnableUploadUI();
+                };
             }
         }
 
@@ -260,6 +309,46 @@ namespace Project
             {
                 ClientSettings.selectedSocket = ClientSettings.clientSocket[idx];
                 //LogMessage("[SYSTEM] Client Selected: " + ClientSettings.selectedSocket.RemoteEndPoint.ToString());
+            }
+        }
+
+        public void EnableUploadUI()
+        {
+            if (browseBtn.InvokeRequired)
+            {
+                // Use Invoke to ensure the code is executed on the UI thread
+                browseBtn.Invoke(new Action(() =>
+                {
+
+                    browseBtn.Enabled = true;
+
+                    // Clear all folder variables
+                    selectedFileLog.Clear();
+                    ConfigFolders.foldersFilePath.Clear();
+
+                    // Enable Main Button
+                    mainBtn.Enabled = true;
+                    mainBtn.Text = "UPLOAD";
+
+                    // Progress bar
+                    progressBar.Visible = false;
+                    progressBar.Value = 0;
+                }));
+            }
+            else
+            {
+                browseBtn.Enabled = true;
+
+                // If already on the UI thread, execute the logic directly
+                selectedFileLog.Clear();
+                ConfigFolders.foldersFilePath.Clear();
+
+                mainBtn.Enabled = true;
+                mainBtn.Text = "UPLOAD";
+
+                // Progress bar
+                progressBar.Visible = false;
+                progressBar.Value = 0;
             }
         }
     }

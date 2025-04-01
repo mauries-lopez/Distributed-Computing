@@ -89,14 +89,7 @@ namespace Project.Client
 
         public static void StartVideoProcessingTask(Socket sender, Consumer consumer, string saveDirectory)
         {
-            /*
-            for (int i = 0; i < ConfigParameter.nConsumerThreads; i++)
-            {
-                Thread thread = new Thread(() => StartProcessingVideo(sender, consumer, saveDirectory, i));
-                thread.IsBackground = true; // Make it a background thread
-                thread.Start();
-            }
-            */
+            
             for (int i = 0; i < ConfigParameter.nConsumerThreads; i++)
             {
                 int threadIndex = i; // Capture loop variable

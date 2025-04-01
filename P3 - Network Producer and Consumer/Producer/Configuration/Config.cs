@@ -15,6 +15,7 @@ namespace Producer.Configuration
     {
         public static int nProducerThreads;
         public static int nMaxQLength;
+        public static long taskCounter;
     }
 
     // Class for storing folder related information

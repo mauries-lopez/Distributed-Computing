@@ -14,3 +14,20 @@ C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\Producer.pdb
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\Producer.genruntimeconfig.cache
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\ref\Producer.dll
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Debug\net8.0-windows\Producer.exe
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Debug\net8.0-windows\Producer.deps.json
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Debug\net8.0-windows\Producer.runtimeconfig.json
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Debug\net8.0-windows\Producer.dll
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Debug\net8.0-windows\Producer.pdb
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\Project.Producer.resources
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\Producer.csproj.GenerateResource.cache
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\Producer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\Producer.AssemblyInfoInputs.cache
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\Producer.AssemblyInfo.cs
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\Producer.csproj.CoreCompileInputs.cache
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\Producer.sourcelink.json
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\Producer.dll
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\refint\Producer.dll
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\Producer.pdb
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\Producer.genruntimeconfig.cache
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Debug\net8.0-windows\ref\Producer.dll

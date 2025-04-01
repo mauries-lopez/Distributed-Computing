@@ -38,6 +38,7 @@
             folderBrowserDialog1 = new FolderBrowserDialog();
             connectedClientList = new CheckedListBox();
             connectedClientLabel = new Label();
+            progressBar = new ProgressBar();
             SuspendLayout();
             // 
             // logBox
@@ -150,11 +151,20 @@
             connectedClientLabel.Text = "Connected Consumer/s:";
             connectedClientLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
+            // progressBar
+            // 
+            progressBar.Location = new Point(12, 381);
+            progressBar.Name = "progressBar";
+            progressBar.Size = new Size(397, 57);
+            progressBar.TabIndex = 10;
+            progressBar.Visible = false;
+            // 
             // Producer
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(progressBar);
             Controls.Add(connectedClientLabel);
             Controls.Add(connectedClientList);
             Controls.Add(selectedFileLabel);
@@ -186,5 +196,6 @@
         private FolderBrowserDialog folderBrowserDialog1;
         private CheckedListBox connectedClientList;
         private Label connectedClientLabel;
+        private ProgressBar progressBar;
     }
 }

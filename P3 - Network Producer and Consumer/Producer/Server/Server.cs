@@ -68,7 +68,7 @@ namespace Project.Server
                     byte[] fileData = File.ReadAllBytes(filePath);
                     if (ClientSettings.selectedSocket != null && ClientSettings.selectedSocket.Connected)
                     {
-                        producer.LogMessage("[SYSTEM]: Uploading " + filePath + "...");
+                        //producer.LogMessage("[SYSTEM]: Uploading " + filePath + "...");
                         ClientSettings.selectedSocket.Send(fileData);
                         producer.LogMessage("[SYSTEM]: Video has been successfully uploaded!");
                     }
