@@ -19,10 +19,6 @@ C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\obj\Release\net8.0-windows\Interop.WMPLib.dll
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\obj\Release\net8.0-windows\AxInterop.WMPLib.dll
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\obj\Release\net8.0-windows\Consumer.csproj.ResolveComReference.cache
-C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\Consumer.dll.manifest
-C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\Consumer.application
-C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\obj\Release\net8.0-windows\Consumer.dll.manifest
-C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\obj\Release\net8.0-windows\Consumer.application
 C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\Consumer.exe
 C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\Consumer.deps.json
 C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\Consumer.runtimeconfig.json
@@ -49,3 +45,7 @@ C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and C
 C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\Consumer.application
 C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Consumer\obj\Release\net8.0-windows\Consumer.dll.manifest
 C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Consumer\obj\Release\net8.0-windows\Consumer.application
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\Consumer.dll.manifest
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\Consumer.application
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\obj\Release\net8.0-windows\Consumer.dll.manifest
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Consumer\obj\Release\net8.0-windows\Consumer.application

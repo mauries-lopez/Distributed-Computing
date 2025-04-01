@@ -14,10 +14,6 @@ C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\obj\Release\net8.0-windows\Producer.pdb
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\obj\Release\net8.0-windows\Producer.genruntimeconfig.cache
 C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\obj\Release\net8.0-windows\ref\Producer.dll
-C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\bin\Release\net8.0-windows\Producer.dll.manifest
-C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\bin\Release\net8.0-windows\Producer.application
-C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\obj\Release\net8.0-windows\Producer.dll.manifest
-C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\obj\Release\net8.0-windows\Producer.application
 C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Release\net8.0-windows\Producer.exe
 C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Release\net8.0-windows\Producer.deps.json
 C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Release\net8.0-windows\Producer.runtimeconfig.json
@@ -39,3 +35,7 @@ C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and C
 C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Release\net8.0-windows\Producer.application
 C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Release\net8.0-windows\Producer.dll.manifest
 C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\obj\Release\net8.0-windows\Producer.application
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\bin\Release\net8.0-windows\Producer.dll.manifest
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\bin\Release\net8.0-windows\Producer.application
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\obj\Release\net8.0-windows\Producer.dll.manifest
+C:\Personal Files\DLSU 4thYR 2nd Term\STDISCM\Problem Sets\P3 - Network Producer and Consumer\Producer\obj\Release\net8.0-windows\Producer.application

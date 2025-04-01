@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mauri\\Documents\\GitHub\\STDISCM-Problem-Sets\\P3 - Network Producer and Consumer\\Producer\\Producer.csproj",
+      "projectUniqueName": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\Producer.csproj",
       "projectName": "Producer",
-      "projectPath": "C:\\Users\\mauri\\Documents\\GitHub\\STDISCM-Problem-Sets\\P3 - Network Producer and Consumer\\Producer\\Producer.csproj",
+      "projectPath": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\Producer.csproj",
       "packagesPath": "C:\\Users\\mauri\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mauri\\Documents\\GitHub\\STDISCM-Problem-Sets\\P3 - Network Producer and Consumer\\Producer\\obj\\",
+      "outputPath": "C:\\Personal Files\\DLSU 4thYR 2nd Term\\STDISCM\\Problem Sets\\P3 - Network Producer and Consumer\\Producer\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\mauri\\AppData\\Roaming\\NuGet\\NuGet.Config",

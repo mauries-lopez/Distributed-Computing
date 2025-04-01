@@ -151,6 +151,7 @@ namespace Project
 
             // Enable Video UI
             thumbnailListView.Visible = true;
+            thumbnailListView.Focus();
             windowsMediaPlayer.Visible = true;
 
             threadInputLabel.Text = "Downloaded Video(s):";
@@ -243,8 +244,16 @@ namespace Project
         }
 
         //https://www.youtube.com/watch?v=5jahCtOQI1k&t=211s
+        private System.Windows.Forms.Timer playbackTimer = new System.Windows.Forms.Timer();
         private void thumbnailListView_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Check if the playbackTimer is already running
+            if (playbackTimer.Enabled == true)
+            {
+                playbackTimer.Stop();
+                playbackTimer.Dispose();
+            }
+
             // Ensure that an item is actually selected
             if (thumbnailListView.SelectedItems.Count == 0)
             {
@@ -257,7 +266,6 @@ namespace Project
             if (selectedItem != null)
             {
                 string fileName = selectedItem.Text;
-                //LogMessage($"[SYSTEM]: {fileName} is selected...");
 
                 foreach (var video in CollectionVideoList.collectionVideoList)
                 {
@@ -269,7 +277,18 @@ namespace Project
                         if (File.Exists(videoPath))
                         {
                             windowsMediaPlayer.URL = videoPath;
-                            windowsMediaPlayer.Ctlcontrols.play(); // Explicitly start playback
+                            windowsMediaPlayer.Ctlcontrols.play(); // Start playback
+                            playbackTimer.Interval = 10000; // 10 seconds
+
+                            playbackTimer.Tick += (s, e) =>
+                            {
+                                windowsMediaPlayer.Ctlcontrols.stop(); // Stop playback after 10 seconds
+                                playbackTimer.Stop(); // Stop the timer
+                                playbackTimer.Dispose();
+                            };
+
+                             // Start the timer
+                             playbackTimer.Start();
                         }
                         else
                         {
@@ -280,5 +299,54 @@ namespace Project
                 }
             }
         }
+
+        private void thumbnailListView_MouseClick(object sender, MouseEventArgs e)
+        {
+            // Stop any ongoing playback
+            windowsMediaPlayer.Ctlcontrols.stop();
+
+            // Ensure there is at least one selected item
+            if (thumbnailListView.SelectedItems.Count > 0)
+            {
+                ListViewItem selectedItem = thumbnailListView.SelectedItems[0];
+
+                if (selectedItem != null)
+                {
+                    string fileName = selectedItem.Text;
+
+                    foreach (var video in CollectionVideoList.collectionVideoList)
+                    {
+                        if (video.thumbnailFileName == fileName)
+                        {
+                            string videoPath = video.videoFilePath;
+
+                            // Check if the video file exists before attempting to open it
+                            if (File.Exists(videoPath))
+                            {
+                                try
+                                {
+                                    ProcessStartInfo psi = new ProcessStartInfo
+                                    {
+                                        FileName = videoPath,
+                                        UseShellExecute = true
+                                    };
+                                    Process.Start(psi);
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogMessage($"Error opening video: {ex.Message}");
+                                }
+                            }
+                            else
+                            {
+                                LogMessage($"[ERROR]: Video file not found - {videoPath}");
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

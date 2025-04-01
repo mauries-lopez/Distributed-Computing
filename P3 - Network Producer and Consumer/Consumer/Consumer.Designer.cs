@@ -146,6 +146,7 @@ namespace Project
             thumbnailListView.UseCompatibleStateImageBehavior = false;
             thumbnailListView.Visible = false;
             thumbnailListView.SelectedIndexChanged += thumbnailListView_SelectedIndexChanged;
+            thumbnailListView.MouseClick += thumbnailListView_MouseClick;
             // 
             // thumbnailImageList
             // 
