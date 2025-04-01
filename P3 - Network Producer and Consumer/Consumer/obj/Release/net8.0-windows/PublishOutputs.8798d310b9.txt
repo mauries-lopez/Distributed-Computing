@@ -1,0 +1,7 @@
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Consumer.exe
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Consumer.dll
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Consumer.deps.json
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Consumer.runtimeconfig.json
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Consumer.pdb
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\Interop.WMPLib.dll
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Consumer\bin\Release\net8.0-windows\app.publish\AxInterop.WMPLib.dll

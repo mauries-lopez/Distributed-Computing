@@ -3,22 +3,22 @@
   "WorkspaceRootPath": "C:\\Users\\mauri\\Documents\\GitHub\\STDISCM-Problem-Sets\\P3 - Network Producer and Consumer\\Producer\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|C:\\Users\\mauri\\Documents\\GitHub\\STDISCM-Problem-Sets\\P3 - Network Producer and Consumer\\Producer\\producer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|solutionrelative:producer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|c:\\users\\mauri\\documents\\github\\stdiscm-problem-sets\\p3 - network producer and consumer\\producer\\producer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|solutionrelative:producer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|c:\\users\\mauri\\documents\\github\\stdiscm-problem-sets\\p3 - network producer and consumer\\producer\\server\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|C:\\Users\\mauri\\Documents\\GitHub\\STDISCM-Problem-Sets\\P3 - Network Producer and Consumer\\Producer\\server\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|solutionrelative:server\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|C:\\Users\\mauri\\Documents\\GitHub\\STDISCM-Problem-Sets\\P3 - Network Producer and Consumer\\Producer\\producer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|solutionrelative:producer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{63086132-115E-4BFA-B8D9-CF355D10F4E1}|..\\Consumer\\Consumer.csproj|c:\\users\\mauri\\documents\\github\\stdiscm-problem-sets\\p3 - network producer and consumer\\consumer\\client\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|c:\\users\\mauri\\documents\\github\\stdiscm-problem-sets\\p3 - network producer and consumer\\producer\\configuration\\config.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|C:\\Users\\mauri\\Documents\\GitHub\\STDISCM-Problem-Sets\\P3 - Network Producer and Consumer\\Producer\\configuration\\config.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{769629FD-1BF5-4B8B-BC26-DA45B4407140}|Producer.csproj|solutionrelative:configuration\\config.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -29,17 +29,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "Server.cs",
               "DocumentMoniker": "C:\\Users\\mauri\\Documents\\GitHub\\STDISCM-Problem-Sets\\P3 - Network Producer and Consumer\\Producer\\Server\\Server.cs",
               "RelativeDocumentMoniker": "Server\\Server.cs",
               "ToolTip": "C:\\Users\\mauri\\Documents\\GitHub\\STDISCM-Problem-Sets\\P3 - Network Producer and Consumer\\Producer\\Server\\Server.cs",
               "RelativeToolTip": "Server\\Server.cs",
-              "ViewState": "AQIAAC4AAAAAAAAAAAAgwEcAAABFAAAA",
+              "ViewState": "AQIAAA0AAAAAAAAAAAAuwCQAAAAfAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-01T03:56:13.867Z",
               "IsPinned": true,
@@ -47,7 +47,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "Producer.cs",
               "DocumentMoniker": "C:\\Users\\mauri\\Documents\\GitHub\\STDISCM-Problem-Sets\\P3 - Network Producer and Consumer\\Producer\\Producer.cs",
               "RelativeDocumentMoniker": "Producer.cs",
@@ -61,7 +61,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "Producer.cs [Design]",
               "DocumentMoniker": "C:\\Users\\mauri\\Documents\\GitHub\\STDISCM-Problem-Sets\\P3 - Network Producer and Consumer\\Producer\\Producer.cs",
               "RelativeDocumentMoniker": "Producer.cs",
@@ -80,10 +80,9 @@
               "RelativeDocumentMoniker": "..\\Consumer\\Client\\Client.cs",
               "ToolTip": "C:\\Users\\mauri\\Documents\\GitHub\\STDISCM-Problem-Sets\\P3 - Network Producer and Consumer\\Consumer\\Client\\Client.cs",
               "RelativeToolTip": "..\\Consumer\\Client\\Client.cs",
-              "ViewState": "AQIAAGsAAAAAAAAAAAAIwIcAAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAAQAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-01T04:53:50.035Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-01T04:53:50.035Z"
             },
             {
               "$type": "Document",
@@ -95,8 +94,7 @@
               "RelativeToolTip": "Configuration\\Config.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAmAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-01T04:09:43.552Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-01T04:09:43.552Z"
             }
           ]
         }

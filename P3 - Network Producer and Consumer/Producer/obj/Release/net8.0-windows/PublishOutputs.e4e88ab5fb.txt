@@ -1,0 +1,5 @@
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Release\net8.0-windows\app.publish\Producer.exe
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Release\net8.0-windows\app.publish\Producer.dll
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Release\net8.0-windows\app.publish\Producer.deps.json
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Release\net8.0-windows\app.publish\Producer.runtimeconfig.json
+C:\Users\mauri\Documents\GitHub\STDISCM-Problem-Sets\P3 - Network Producer and Consumer\Producer\bin\Release\net8.0-windows\app.publish\Producer.pdb
