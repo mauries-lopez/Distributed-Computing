@@ -22,9 +22,17 @@ namespace Project.Server
         public static async void EstablishConnection(Producer producer)
         {
             IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
+            IPAddress localIp = null;
+            foreach (var ip in ipHost.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    localIp = ip;
+                }
+            }
             producer.LogMessage("[SERVER]: Retrieving Local IP Address...");
 
-            IPAddress localIp = ipHost.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+            //IPAddress localIp = ipHost.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 
             IPEndPoint localEndPoint = new IPEndPoint(localIp, 1023); // Bind to all interfaces
             producer.LogMessage("[SERVER]: Preparing the local end point on...");
