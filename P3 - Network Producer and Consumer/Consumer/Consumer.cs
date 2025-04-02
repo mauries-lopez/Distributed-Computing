@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Windows.Forms.VisualStyles;
 using Producer.Configuration;
 
 namespace Project
@@ -37,105 +38,152 @@ namespace Project
             }
         }
 
-        public string RetrieveIPAddress()
-        {
-            // Disable UI
-            ipAddressInput.Visible = false;
-
-            return ipAddressInput.Text;
-        }
-
         // To retrieve the inputs from the text boxes
-        public void RetrieveParameters()
+        public bool RetrieveParameters()
         {
             // Retrieve inputs from the UI
-            List<TextBox> parameters = [numThreadsInput, maxQueueLengthInput];
+            List<TextBox> parameters = [numThreadsInput, maxQueueLengthInput, ipAddressInput];
+
+            bool threadInput = false, queueInput = false, ipInput = false;
 
             // Validate input
             foreach (TextBox param in parameters)
             {
-                var returnedValues = validateInput(param.Text);
+                var returnedValues = validateInput(param);
                 //returnedValues.Item1 = layersPassed
-                //returnedValues.Item2 = converted string to int
+                //returnedValues.Item2 = converted string to int/string
 
                 // Button Change UI if all check layers passed
                 if (returnedValues.Item1 == 2)
                 {
                     if (param.Name == "numThreadsInput")
                     {
-                        ConfigParameter.nConsumerThreads = returnedValues.Item2;
-                        LogMessage("[SYSTEM]: Successfully initialized " + ConfigParameter.nConsumerThreads + " consumer thread/s.");
+                        ConfigParameter.nConsumerThreads = (int)returnedValues.Item2;
+                        threadInput = true;
                     }
                     else if (param.Name == "maxQueueLengthInput")
                     {
-                        ConfigParameter.nMaxQueueLength = returnedValues.Item2;
-                        LogMessage("[SYSTEM]: Successfully initialized " + ConfigParameter.nMaxQueueLength + " max queue length.");
+                        ConfigParameter.nMaxQueueLength = (int)returnedValues.Item2;
+                        queueInput = true;
+                    } else if (param.Name == "ipAddressInput")
+                    {
+                        ConfigParameter.ipAddress = (string)returnedValues.Item2;
+                        ipInput = true;
                     }
-
-                    // Button UI
-                    mainBtn.Visible = false;
-
-                    // Hide Input UI
-                    numThreadsInput.Visible = false;
-                    maxQueueLengthLabel.Visible = false;
-                    maxQueueLengthInput.Visible = false;
                 }
+            }
+
+            if (threadInput && queueInput && ipInput)
+            {
+                LogMessage("[SYSTEM]: Successfully initialized " + ConfigParameter.nConsumerThreads + " consumer thread/s.");
+                LogMessage("[SYSTEM]: Successfully initialized " + ConfigParameter.nMaxQueueLength + " max queue length.");
+                LogMessage("[SYSTEM]: Successfully initialized " + ConfigParameter.ipAddress + " as the IPv4 Address.");
+
+                // Button UI
+                mainBtn.Visible = false;
+
+                // Hide Input UI
+                numThreadsInput.Visible = false;
+                maxQueueLengthLabel.Visible = false;
+                maxQueueLengthInput.Visible = false;
+
+                return true;
+            } else
+            {
+                return false;
             }
         }
 
-        private (int, int) validateInput(string input)
+        private (int, object) validateInput(TextBox param)
         {
             // Initialize layer of checking
             int successChecks = 0;
 
-            // Convert tempNumThreads to Integer (https://stackoverflow.com/questions/2344411/how-to-convert-string-to-integer-in-c-sharp)
-            int i = 0;
-            int intNumThreads = 0;
-            bool isSuccessConvert = int.TryParse(input, out i);
+            // Get the value
+            string input = param.Text;
 
-            // 1st Layer
-            if (isSuccessConvert == false)
+            if ( param.Name == "numThreadsInput" || param.Name == "maxQueueLengthInput")
             {
-                LogMessage("[SYSTEM ERROR]: " + i + " - Invalid Input. Only numerical values are allowed.");
+                // Convert tempNumThreads to Integer (https://stackoverflow.com/questions/2344411/how-to-convert-string-to-integer-in-c-sharp)
+                int i = 0;
+                int intNumThreads = 0;
+                bool isSuccessConvert = int.TryParse(input, out i);
+
+                // 1st Layer
+                if (isSuccessConvert == false)
+                {
+                    LogMessage("[SYSTEM ERROR]: " + i + " - Invalid Input. Only numerical values are allowed.");
+                }
+                else
+                {
+                    successChecks++; // 1st layer of check
+                    intNumThreads = int.Parse(input); // Convert to integer
+                }
+
+                // 2nd Layer
+                // Check for validation
+                if (intNumThreads <= 0 && isSuccessConvert == true) // Check for negative values
+                {
+                    LogMessage("[SYSTEM ERROR]: Only positive values are allowed.");
+                }
+                else if ((intNumThreads >= int.MaxValue) && isSuccessConvert == true) // Check for maximum
+                {
+                    LogMessage("[SYSTEM ERROR]: Value is too large.");
+                }
+                else
+                {
+                    successChecks++;
+                }
+
+                return (successChecks, intNumThreads);
             }
             else
             {
-                successChecks++; // 1st layer of check
-                intNumThreads = int.Parse(input); // Convert to integer
+                // Validation for IP Address
+                // https://stackoverflow.com/questions/11412956/what-is-the-best-way-of-validating-an-ip-address
+
+                if (String.IsNullOrWhiteSpace(input))
+                {
+                    return (0, "");
+                }
+
+                string[] numDots = input.Split('.');
+                if( numDots.Length != 4)
+                {
+                    return (0, "");
+                }
+
+                byte tempIpParsed;
+                bool canParseIp = numDots.All(r => byte.TryParse(r, out tempIpParsed));
+
+                if ( canParseIp == true)
+                {
+                    return (2, input);
+                } else
+                {
+                    return (0, "");
+                }
             }
 
-            // 2nd Layer
-            // Check for validation
-            if (intNumThreads <= 0 && isSuccessConvert == true) // Check for negative values
-            {
-                LogMessage("[SYSTEM ERROR]: Only positive values are allowed.");
-            }
-            else if ((intNumThreads >= int.MaxValue) && isSuccessConvert == true) // Check for maximum
-            {
-                LogMessage("[SYSTEM ERROR]: Value is too large.");
-            }
-            else
-            {
-                successChecks++;
-            }
-
-            return (successChecks, intNumThreads);
         }
 
         // INITIALIZE/UPLOAD button click event listener
         private void mainBtn_Click(object sender, EventArgs e)
         {
             // Retrieve input parameters
-            RetrieveParameters();
+            bool isValidInputs = RetrieveParameters();
 
-            // Retrieve IPv4
-            RetrieveIPAddress();
+            if (isValidInputs == true)
+            {
+                // Load all Video UI related
+                LoadVideoUI();
 
-            // Load all Video UI related
-            LoadVideoUI();
-
-            // Connect To Server
-            Client.Client.ConnectToServer(this); //Server folder -> Server.cs -> Function
+                // Connect To Server
+                Client.Client.ConnectToServer(this); //Server folder -> Server.cs -> Function
+            } else
+            {
+                LogMessage("[SYSTEM ERROR]: Invalid Input(s)...");
+            }
         }
 
         private void LoadVideoUI()

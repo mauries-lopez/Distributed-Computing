@@ -10,7 +10,7 @@ namespace Project.Client
     {
         public static async void ConnectToServer(Consumer consumer)
         {
-            string serverIpAddress = consumer.RetrieveIPAddress(); // Replace with the actual IPv4 address of HOST (cmd -> ipconfig -> copy ipv4 address)
+            string serverIpAddress = ConfigParameter.ipAddress; // Replace with the actual IPv4 address of HOST (cmd -> ipconfig -> copy ipv4 address)
             int serverPort = 1023;
 
             try
