@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Eventing.Reader;
+﻿using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
@@ -178,10 +179,53 @@ namespace Project.Client
 
                         if (isDuplicate == false)
                         {
-                            // Add the video
+                            // Generate thumbnail from the compressed file
                             consumer.GenerateThumbnail(filePath, thumbnailPath);
                             CollectionVideoList.collectionVideoList.Add(video);
                             consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Video successfully saved at {filePath}");
+
+                            /*
+                            string ffmpegPath = "ffmpeg";
+
+                            // Generate new file path
+                            string fileNameCompressed = $"video_{DateTime.Now.Ticks}_compressed.mp4";
+                            string filePathCompressed = Path.Combine(saveDirectory, fileNameCompressed);
+
+                            // FFmpeg command to extract a frame
+                            string arguments = $"-i \"{filePath}\" -vcodec libx264 -crf 28 -preset fast -b:a 128k \"{filePathCompressed}\"";
+
+                            ProcessStartInfo startInfo = new ProcessStartInfo
+                            {
+                                FileName = ffmpegPath,
+                                Arguments = arguments,
+                                RedirectStandardOutput = true,
+                                RedirectStandardError = true,
+                                UseShellExecute = false,
+                                CreateNoWindow = true
+                            };
+
+                            using (Process process = new Process { StartInfo = startInfo })
+                            {
+                                process.Start();
+                                process.WaitForExit();
+                            }
+
+                            if (File.Exists(filePathCompressed))
+                            {
+                                // Generate thumbnail from the compressed file
+                                consumer.GenerateThumbnail(filePathCompressed, thumbnailPath);
+
+                                // Update video object with the new compressed file path
+                                video.videoFilePath = filePathCompressed;
+                                CollectionVideoList.collectionVideoList.Add(video);
+
+                                // Log success message
+                                consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Video successfully saved at {filePathCompressed}");
+
+                                // Delete the original video after successful compression
+                                File.Delete(filePath);
+                            }
+                            */
                         }
                     }
                 }
