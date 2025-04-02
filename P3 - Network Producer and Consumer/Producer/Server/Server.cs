@@ -126,6 +126,10 @@ namespace Project.Server
             //clientSocket.Shutdown(SocketShutdown.Both);
             //clientSocket.Close();
             //producer.LogMessage("[SERVER]: Client connection closed.");
+
+            Thread thread = new Thread(() => ReceiveQueueFullMsg(clientSocket, producer));
+            thread.IsBackground = true;
+            thread.Start();
         }
 
         private static void SendUniqueClientSocket(Socket clientSocket, Producer producer)
@@ -136,6 +140,25 @@ namespace Project.Server
             byte[] endPointBytes = System.Text.Encoding.UTF8.GetBytes(clientEndPoint);
             clientSocket.Send(endPointBytes);
             producer.LogMessage("[SERVER]: Unique identifier sent!");
+        }
+
+        private static void ReceiveQueueFullMsg(Socket clientSocket, Producer producer)
+        {
+            producer.LogMessage("[SERVER]: Message Receiver prepared...");
+            while (true)
+            {
+                try
+                {
+                    byte[] buffer = new byte[1024];
+                    int bytesReceived = clientSocket.Receive(buffer, SocketFlags.None);
+                    string serverSentData = System.Text.Encoding.UTF8.GetString(buffer, 0, bytesReceived);
+                    producer.LogMessage(serverSentData);
+                } catch (SocketException ex)
+                {
+                    producer.LogMessage($"[SERVER ERROR]: {ex}");
+                    break;
+                }
+            }
         }
     }
 }

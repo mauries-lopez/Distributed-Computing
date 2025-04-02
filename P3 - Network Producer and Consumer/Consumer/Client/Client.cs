@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.Eventing.Reader;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using Producer.Configuration;
 
 namespace Project.Client
@@ -130,7 +131,9 @@ namespace Project.Client
                         Video video = new Video();
                         
                         consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Downloading received video...");
-                        File.WriteAllBytes(filePath, videoFileBytes); // Save video to disk
+
+                        // Save video to filepath
+                        File.WriteAllBytes(filePath, videoFileBytes);
 
                         video.videoFilePath = filePath;
 
@@ -143,13 +146,43 @@ namespace Project.Client
 
                         // Generate thumbnail inside the 'thumbnails' directory
                         string thumbnailPath = Path.Combine(thumbnailsDir, $"{Path.GetFileNameWithoutExtension(fileName)}.jpg");
-                        consumer.GenerateThumbnail(filePath, thumbnailPath);
-
                         video.thumbnailFileName = $"{Path.GetFileNameWithoutExtension(fileName)}.jpg";
 
-                        CollectionVideoList.collectionVideoList.Add(video);
+                        // Generate MD5 Hash Code for the video
+                        // https://stackoverflow.com/questions/15133970/get-duplicate-file-list-by-computing-their-md5
+                        if (File.Exists(filePath))
+                        {
+                            using (var md5 = MD5.Create())
+                            {
+                                using (var stream = File.OpenRead(filePath))
+                                {
+                                    video.md5Hash = BitConverter.ToString(md5.ComputeHash(stream));
+                                }
+                            }
+                        }
 
-                        consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Video successfully saved at {filePath}");
+                        bool isDuplicate = false;
+                        foreach (var x in CollectionVideoList.collectionVideoList)
+                        {
+                            if (x.md5Hash == video.md5Hash)
+                            {
+                                consumer.LogMessage($"[SYSTEM ERROR]: Duplicate video found! Skipping file...");
+
+                                // Delete written video (this is due to the pre-write of the video in the disk) so this is necessary
+                                File.Delete(filePath);
+
+                                isDuplicate = true;
+                                break;
+                            }
+                        }
+
+                        if (isDuplicate == false)
+                        {
+                            // Add the video
+                            consumer.GenerateThumbnail(filePath, thumbnailPath);
+                            CollectionVideoList.collectionVideoList.Add(video);
+                            consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Video successfully saved at {filePath}");
+                        }
                     }
                 }
             }
@@ -201,11 +234,15 @@ namespace Project.Client
                                 if (Queue.videoQueue.Count >= ConfigParameter.nMaxQueueLength)
                                 {
                                     consumer.LogMessage("[SERVER]: Queue full! Video skipped...");
+
+                                    string queueMsg = "[SERVER]: Queue full! Uploaded video skipped...";
+                                    byte[] endPointBytes = System.Text.Encoding.UTF8.GetBytes(queueMsg);
+                                    sender.Send(endPointBytes);
                                 }
                                 else
                                 {
                                     Queue.videoQueue.Enqueue(videoFileBuffer);
-                                    consumer.LogMessage("[SERVER]: Video queued...");
+                                    consumer.LogMessage("[SERVER]: Video queued/Received by thread...");
                                 }
                             }
                         }

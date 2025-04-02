@@ -48,9 +48,6 @@ namespace Project
         // To retrieve the inputs from the text boxes
         public void RetrieveParameters()
         {
-            // Initialize layer of checking
-            int successChecks = 0;
-
             // Retrieve inputs from the UI
             List<TextBox> parameters = [numThreadsInput, maxQueueLengthInput];
 
@@ -179,7 +176,7 @@ namespace Project
             {
                 try
                 {
-                    if (Directory.Exists(thumbnailsDir))
+                    if (Directory.Exists(thumbnailsDir) && CollectionVideoList.collectionVideoList.Count > 0)
                     {
                         string[] paths = Directory.GetFiles(thumbnailsDir);
 
@@ -188,19 +185,22 @@ namespace Project
                             if (!loadedImages.Contains(path)) // Prevent duplicate loading
                             {
                                 loadedImages.Add(path);
-                                Image img = Image.FromFile(path);
-                                string fileName = Path.GetFileName(path);
-
-                                // Ensure UI updates happen on the main thread
-                                if (thumbnailListView.InvokeRequired)
+                                using (Image originalImg = Image.FromFile(path)) // Load original image
                                 {
-                                    thumbnailListView.Invoke((MethodInvoker)delegate
+                                    Image thumbnail = new Bitmap(originalImg, new Size(100, 100)); // Resize to thumbnail
+                                    string fileName = Path.GetFileName(path);
+
+                                    // Ensure UI updates happen on the main thread
+                                    if (thumbnailListView.InvokeRequired)
                                     {
-                                        thumbnailImageList.Images.Add(img);
-                                        thumbnailListView.LargeImageList = thumbnailImageList;
-                                        thumbnailListView.Items.Add(new ListViewItem { Text = fileName, ImageIndex = thumbnailImageList.Images.Count - 1 });
-                                        thumbnailListView.Refresh();
-                                    });
+                                        thumbnailListView.Invoke((MethodInvoker)delegate
+                                        {
+                                            thumbnailImageList.Images.Add(thumbnail);
+                                            thumbnailListView.LargeImageList = thumbnailImageList;
+                                            thumbnailListView.Items.Add(new ListViewItem { Text = fileName, ImageIndex = thumbnailImageList.Images.Count - 1 });
+                                            thumbnailListView.Refresh();
+                                        });
+                                    }
                                 }
                             }
                         }
@@ -210,6 +210,8 @@ namespace Project
                 {
                     LogMessage($"[SYSTEM ERROR]: {ex}");
                 }
+
+                Thread.Sleep(2000); // 2 second cooldown (Should refresh the listview box for every 2 seconds
             }
         }
 

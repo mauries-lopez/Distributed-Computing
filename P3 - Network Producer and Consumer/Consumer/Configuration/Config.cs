@@ -19,6 +19,7 @@ namespace Producer.Configuration
     {
         public string videoFilePath;
         public string thumbnailFileName;
+        public string md5Hash;
     }
 
     public struct CollectionVideoList
