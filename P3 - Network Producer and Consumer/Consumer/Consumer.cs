@@ -65,7 +65,8 @@ namespace Project
                     {
                         ConfigParameter.nMaxQueueLength = (int)returnedValues.Item2;
                         queueInput = true;
-                    } else if (param.Name == "ipAddressInput")
+                    }
+                    else if (param.Name == "ipAddressInput")
                     {
                         ConfigParameter.ipAddress = (string)returnedValues.Item2;
                         ipInput = true;
@@ -78,6 +79,7 @@ namespace Project
                 LogMessage("[SYSTEM]: Successfully initialized " + ConfigParameter.nConsumerThreads + " consumer thread/s.");
                 LogMessage("[SYSTEM]: Successfully initialized " + ConfigParameter.nMaxQueueLength + " max queue length.");
                 LogMessage("[SYSTEM]: Successfully initialized " + ConfigParameter.ipAddress + " as the IPv4 Address.");
+                LogMessage("[SYSTEM]: Compressed video(s) is set to " + ConfigParameter.shouldCompress + ".");
 
                 // Button UI
                 mainBtn.Visible = false;
@@ -86,9 +88,12 @@ namespace Project
                 numThreadsInput.Visible = false;
                 maxQueueLengthLabel.Visible = false;
                 maxQueueLengthInput.Visible = false;
+                compressedCheckBox.Visible = false;
+                compressedCheckLabel.Visible = false;
 
                 return true;
-            } else
+            }
+            else
             {
                 return false;
             }
@@ -102,7 +107,7 @@ namespace Project
             // Get the value
             string input = param.Text;
 
-            if ( param.Name == "numThreadsInput" || param.Name == "maxQueueLengthInput")
+            if (param.Name == "numThreadsInput" || param.Name == "maxQueueLengthInput")
             {
                 // Convert tempNumThreads to Integer (https://stackoverflow.com/questions/2344411/how-to-convert-string-to-integer-in-c-sharp)
                 int i = 0;
@@ -148,7 +153,7 @@ namespace Project
                 }
 
                 string[] numDots = input.Split('.');
-                if( numDots.Length != 4)
+                if (numDots.Length != 4)
                 {
                     return (0, "");
                 }
@@ -156,10 +161,11 @@ namespace Project
                 byte tempIpParsed;
                 bool canParseIp = numDots.All(r => byte.TryParse(r, out tempIpParsed));
 
-                if ( canParseIp == true)
+                if (canParseIp == true)
                 {
                     return (2, input);
-                } else
+                }
+                else
                 {
                     return (0, "");
                 }
@@ -170,6 +176,9 @@ namespace Project
         // INITIALIZE/UPLOAD button click event listener
         private void mainBtn_Click(object sender, EventArgs e)
         {
+            // Retrieve Compressed Check Box
+            ConfigParameter.shouldCompress = compressedCheckBox.Checked;
+
             // Retrieve input parameters
             bool isValidInputs = RetrieveParameters();
 
@@ -180,7 +189,8 @@ namespace Project
 
                 // Connect To Server
                 Client.Client.ConnectToServer(this); //Server folder -> Server.cs -> Function
-            } else
+            }
+            else
             {
                 LogMessage("[SYSTEM ERROR]: Invalid Input(s)...");
             }
@@ -337,8 +347,8 @@ namespace Project
                                 playbackTimer.Dispose();
                             };
 
-                             // Start the timer
-                             playbackTimer.Start();
+                            // Start the timer
+                            playbackTimer.Start();
                         }
                         else
                         {
@@ -398,5 +408,15 @@ namespace Project
             }
         }
 
+        private void compressedCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if ( compressedCheckBox.Checked)
+            {
+                compressedCheckLabel.Visible = true;
+            } else
+            {
+                compressedCheckLabel.Visible = false;
+            }
+        }
     }
 }

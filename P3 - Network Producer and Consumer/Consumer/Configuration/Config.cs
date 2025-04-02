@@ -14,6 +14,7 @@ namespace Producer.Configuration
         public static int nConsumerThreads;
         public static int nMaxQueueLength;
         public static string ipAddress;
+        public static bool shouldCompress;
     }
 
     public struct Video

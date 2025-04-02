@@ -42,6 +42,8 @@ namespace Project
             thumbnailListView = new ListView();
             thumbnailImageList = new ImageList(components);
             windowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
+            compressedCheckBox = new CheckBox();
+            compressedCheckLabel = new Label();
             ((System.ComponentModel.ISupportInitialize)windowsMediaPlayer).BeginInit();
             SuspendLayout();
             // 
@@ -164,13 +166,35 @@ namespace Project
             windowsMediaPlayer.TabIndex = 12;
             windowsMediaPlayer.Visible = false;
             // 
+            // compressedCheckBox
+            // 
+            compressedCheckBox.AutoSize = true;
+            compressedCheckBox.Location = new Point(12, 194);
+            compressedCheckBox.Name = "compressedCheckBox";
+            compressedCheckBox.Size = new Size(130, 19);
+            compressedCheckBox.TabIndex = 13;
+            compressedCheckBox.Text = "Compressed Video?";
+            compressedCheckBox.UseVisualStyleBackColor = true;
+            compressedCheckBox.CheckedChanged += compressedCheckBox_CheckedChanged;
+            // 
+            // compressedCheckLabel
+            // 
+            compressedCheckLabel.AutoSize = true;
+            compressedCheckLabel.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
+            compressedCheckLabel.Location = new Point(12, 216);
+            compressedCheckLabel.Name = "compressedCheckLabel";
+            compressedCheckLabel.Size = new Size(280, 15);
+            compressedCheckLabel.TabIndex = 14;
+            compressedCheckLabel.Text = "Note: This might significantly slow down the system.";
+            compressedCheckLabel.Visible = false;
+            // 
             // Consumer
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(windowsMediaPlayer);
-            Controls.Add(thumbnailListView);
+            Controls.Add(compressedCheckLabel);
+            Controls.Add(compressedCheckBox);
             Controls.Add(maxQueueLengthInput);
             Controls.Add(maxQueueLengthLabel);
             Controls.Add(ipAddressInput);
@@ -179,6 +203,8 @@ namespace Project
             Controls.Add(threadInputLabel);
             Controls.Add(numThreadsInput);
             Controls.Add(logBox);
+            Controls.Add(thumbnailListView);
+            Controls.Add(windowsMediaPlayer);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             KeyPreview = true;
             MaximizeBox = false;
@@ -205,5 +231,7 @@ namespace Project
         private ListView thumbnailListView;
         private ImageList thumbnailImageList;
         private AxWMPLib.AxWindowsMediaPlayer windowsMediaPlayer;
+        private CheckBox compressedCheckBox;
+        private Label compressedCheckLabel;
     }
 }

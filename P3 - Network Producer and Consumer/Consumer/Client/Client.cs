@@ -179,53 +179,66 @@ namespace Project.Client
 
                         if (isDuplicate == false)
                         {
-                            // Generate thumbnail from the compressed file
-                            consumer.GenerateThumbnail(filePath, thumbnailPath);
-                            CollectionVideoList.collectionVideoList.Add(video);
-                            consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Video successfully saved at {filePath}");
-
-                            /*
-                            string ffmpegPath = "ffmpeg";
-
-                            // Generate new file path
-                            string fileNameCompressed = $"video_{DateTime.Now.Ticks}_compressed.mp4";
-                            string filePathCompressed = Path.Combine(saveDirectory, fileNameCompressed);
-
-                            // FFmpeg command to extract a frame
-                            string arguments = $"-i \"{filePath}\" -vcodec libx264 -crf 28 -preset fast -b:a 128k \"{filePathCompressed}\"";
-
-                            ProcessStartInfo startInfo = new ProcessStartInfo
-                            {
-                                FileName = ffmpegPath,
-                                Arguments = arguments,
-                                RedirectStandardOutput = true,
-                                RedirectStandardError = true,
-                                UseShellExecute = false,
-                                CreateNoWindow = true
-                            };
-
-                            using (Process process = new Process { StartInfo = startInfo })
-                            {
-                                process.Start();
-                                process.WaitForExit();
-                            }
-
-                            if (File.Exists(filePathCompressed))
+                            if ( ConfigParameter.shouldCompress == false )
                             {
                                 // Generate thumbnail from the compressed file
-                                consumer.GenerateThumbnail(filePathCompressed, thumbnailPath);
-
-                                // Update video object with the new compressed file path
-                                video.videoFilePath = filePathCompressed;
+                                consumer.GenerateThumbnail(filePath, thumbnailPath);
                                 CollectionVideoList.collectionVideoList.Add(video);
+                                consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Video successfully saved at {filePath}");
+                            } else
+                            {
+                                string ffmpegPath = "ffmpeg";
 
-                                // Log success message
-                                consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Video successfully saved at {filePathCompressed}");
+                                // Generate new file path
+                                string fileNameCompressed = $"video_{DateTime.Now.Ticks}_compressed.mp4";
+                                string filePathCompressed = Path.Combine(saveDirectory, fileNameCompressed);
 
-                                // Delete the original video after successful compression
-                                File.Delete(filePath);
+                                // FFmpeg command to extract a frame
+                                // preset: ultrafast
+                                // crf: 50 (higher the faster)
+                                // resolution: 640x360 (360p)
+                                string arguments = $"-i \"{filePath}\" -vcodec libx264 -crf 50 -preset ultrafast -b:v 500k -s 640x360 -b:a 128k -threads 0 \"{filePathCompressed}\"";
+
+                                ProcessStartInfo startInfo = new ProcessStartInfo
+                                {
+                                    FileName = ffmpegPath,
+                                    Arguments = arguments,
+                                    RedirectStandardOutput = true,
+                                    RedirectStandardError = true,
+                                    UseShellExecute = false,
+                                    CreateNoWindow = true
+                                };
+
+                                using (Process process = new Process { StartInfo = startInfo })
+                                {
+                                    consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Compressing video file...");
+                                    process.Start();
+
+                                    // For some reason, if I remove this, video will not get compressed.
+                                    // https://stackoverflow.com/questions/56571693/how-to-properly-read-c-sharp-process-standard-error-stream-without-deadlocks
+                                    // Apparently, StandardError needs to be read for it to move. Otherwise, it will not complete and cause deadlock.
+                                    while (!process.StandardError.EndOfStream)
+                                    {
+                                        string line = process.StandardError.ReadLine();
+                                    }
+                                    process.WaitForExit();
+                                }
+
+                                if (File.Exists(filePathCompressed))
+                                {
+                                    consumer.GenerateThumbnail(filePathCompressed, thumbnailPath);
+                                    video.videoFilePath = filePathCompressed;
+                                    CollectionVideoList.collectionVideoList.Add(video);
+                                    consumer.LogMessage($"[SYSTEM - THREAD#{threadID}]: Video successfully saved at {filePathCompressed}");
+                                    
+                                    // To remove the compressed video original file
+                                    File.Delete(filePath);
+                                }
+                                else
+                                {
+                                    consumer.LogMessage($"[SYSTEM ERROR]: Compression failed for {filePath}");
+                                }
                             }
-                            */
                         }
                     }
                 }
