@@ -49,3 +49,12 @@ SETTUP UP: CONSUMER SIDE
 
 An installation guide and demonstration are shown in the video named "Hermit_PCtoPC_Demonstration.mp4." You may watch it if you find the instructions confusing.
 -----------------------------------------------------
+
+----------[via Visual Studio (Source Code)]-----------
+Prerequisite:
+- PC must have:
+	(1) FFmpeg is installed, and its path is set in the system's environment variables.
+	(2 *optional*) Disabled firewall & antivirus for public and private network if application does not work as intended.
+
+An installation guide and demonstration are shown in the video named "Hermit_SrcCode_HowToExecute.mp4." You may watch it if you find the instructions confusing.
+-----------------------------------------------------
