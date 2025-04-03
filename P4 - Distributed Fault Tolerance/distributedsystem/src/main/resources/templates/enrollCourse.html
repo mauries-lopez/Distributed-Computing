@@ -5,6 +5,62 @@
     <title>Enroll Course(s)</title>
 </head>
 <body>
-
+    <a href="/reqLogout">
+        <button name="logoutBtn" type="button">Logout</button>
+    </a>
+    <a href="/reqAvailablecourses">
+        <button name="availableCoursesBtn" type="button">View Available Courses</button>
+    </a>
+    <a href="/reqEnrollcourse">
+        <button name="enrollCourseBtn" type="button" disabled>Enroll Course(s)</button>
+    </a>
+    <a href="/reqViewprevgrades">
+        <button name="viewPrevGradesBtn" type="button">View Previous Grades</button>
+    </a>
+    <a href="/reqUploadgrades">
+        <button name="facultyUploadGradesBtn" type="button">Upload Grades</button>
+    </a>
+    <hr>
+    <h1>Enroll Courses</h1>
+    <p><b>Name:</b> Student Name</p>
+    <p><b>ID Number:</b> 12345678</p>
+    <p><b>Program Code:</b> BSCS-ST</p>
+    <table id="coursesEnrolled">
+        <tr>
+            <th>Course ID</th>
+            <th>Course Name</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Course-1</td>
+            <td>Enlisted</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Course-2</td>
+            <td>Waitlisted</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Course-3</td>
+            <td>Dropped</td>
+        </tr>
+    </table>
+    <hr>
+    <table id="courseToEnlist">
+        <tr>
+            <th>Course ID</th>
+            <th>Course Name</th>
+            <th>Confirm</th>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Course-4</td>
+            <td>
+                <button name="enlistBtn" type="button">Enlist</button>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

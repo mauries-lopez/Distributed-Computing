@@ -5,6 +5,53 @@
     <title>Available Courses</title>
 </head>
 <body>
-
+    <a href="/reqLogout">
+        <button name="logoutBtn" type="button">Logout</button>
+    </a>
+    <a href="/reqAvailablecourses">
+        <button name="availableCoursesBtn" type="button" disabled>View Available Courses</button>
+    </a>
+    <a href="/reqEnrollcourse">
+        <button name="enrollCourseBtn" type="button">Enroll Course(s)</button>
+    </a>
+    <a href="/reqViewprevgrades">
+        <button name="viewPrevGradesBtn" type="button">View Previous Grades</button>
+    </a>
+    <a href="/reqUploadgrades">
+        <button name="facultyUploadGradesBtn" type="button">Upload Grades</button>
+    </a>
+    <hr>
+    <h1>Available Courses</h1>
+    <!-- Display list of courses -->
+    <table id="courseList">
+        <tr>
+            <th>Course ID</th>
+            <th>Course Name</th>
+            <th>Status</th>
+            <th>Available Slots</th>
+            <th>Total Slots</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Course-1</td>
+            <td>Open</td>
+            <td>2</td>
+            <td>20</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Course-2</td>
+            <td>Closed</td>
+            <td>20</td>
+            <td>20</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Placeholder</td>
+            <td>Open</td>
+            <td>10</td>
+            <td>20</td>
+        </tr>
+    </table>
 </body>
 </html>
