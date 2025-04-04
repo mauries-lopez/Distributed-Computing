@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
     <head>
         <title>Distributed System</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -12,14 +12,18 @@
         <a href="/reqAvailablecourses">
             <button name="availableCoursesBtn" type="button">View Available Courses</button>
         </a>
-        <a href="/reqEnrollcourse">
-            <button name="enrollCourseBtn" type="button">Enroll Course(s)</button>
-        </a>
+        <form action="/reqEnrollcourse" method="post">
+            <input type="text" id="email" name="email" style="display: none;" th:value="${userEmail}">
+            <button name="enrollCourseBtn" type="submit">Enroll Course(s)</button>
+        </form>
         <a href="/reqViewprevgrades">
             <button name="viewPrevGradesBtn" type="button">View Previous Grades</button>
         </a>
-        <a href="/reqUploadgrades">
+        <a id="facultyUploadGradesAnc" href="/reqUploadgrades" th:if="${facultyEmail != null}">
             <button name="facultyUploadGradesBtn" type="button">Upload Grades</button>
+        </a>
+        <a id="facultyDeployNewCourse" href="/reqDeployNewCourse" th:if="${facultyEmail != null}">
+            <button name="facultyDeployNewCourseBtn" type="button">Deploy New Course</button>
         </a>
     </body>
 </html>

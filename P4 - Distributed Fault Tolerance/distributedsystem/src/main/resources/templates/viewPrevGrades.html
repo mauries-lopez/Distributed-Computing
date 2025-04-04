@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
         <title>View Previous Grades</title>
@@ -11,20 +11,26 @@
         <a href="/reqAvailablecourses">
             <button name="availableCoursesBtn" type="button">View Available Courses</button>
         </a>
-        <a href="/reqEnrollcourse">
-            <button name="enrollCourseBtn" type="button">Enroll Course(s)</button>
-        </a>
+        <form action="/reqEnrollcourse" method="post">
+            <input type="text" id="email" name="email" style="display: none;" th:value="${userEmail}">
+            <button name="enrollCourseBtn" type="submit">Enroll Course(s)</button>
+        </form>
         <a href="/reqViewprevgrades">
             <button name="viewPrevGradesBtn" type="button" disabled>View Previous Grades</button>
         </a>
-        <a href="/reqUploadgrades">
+        <a id="facultyUploadGradesAnc" href="/reqUploadgrades" th:if="${facultyEmail != null}">
             <button name="facultyUploadGradesBtn" type="button">Upload Grades</button>
+        </a>
+        <a id="facultyDeployNewCourse" href="/reqDeployNewCourse" th:if="${facultyEmail != null}">
+            <button name="facultyDeployNewCourseBtn" type="button">Deploy New Course</button>
         </a>
         <hr>
         <h1>Previous Grades</h1>
-        <p><b>Name:</b> Student Name</p>
+        <p><b>Email:</b> <span th:text="${userEmail}">[email here]</span></p>
+        <!--
         <p><b>ID Number:</b> 12345678</p>
         <p><b>Program Code:</b> BSCS-ST</p>
+        -->
         <table id="previousGrades">
             <tr>
                 <th>Course ID</th>

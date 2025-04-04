@@ -1,8 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <meta charset="UTF-8">
-        <title>Available Courses</title>
     </head>
     <body>
         <a href="/reqLogout">
@@ -11,14 +9,18 @@
         <a href="/reqAvailablecourses">
             <button name="availableCoursesBtn" type="button" disabled>View Available Courses</button>
         </a>
-        <a href="/reqEnrollcourse">
-            <button name="enrollCourseBtn" type="button">Enroll Course(s)</button>
-        </a>
+        <form action="/reqEnrollcourse" method="post">
+            <input type="text" id="email" name="email" style="display: none;" th:value="${userEmail}">
+            <button name="enrollCourseBtn" type="submit">Enroll Course(s)</button>
+        </form>
         <a href="/reqViewprevgrades">
             <button name="viewPrevGradesBtn" type="button">View Previous Grades</button>
         </a>
-        <a href="/reqUploadgrades">
+        <a id="facultyUploadGradesAnc" href="/reqUploadgrades" th:if="${facultyEmail != null}">
             <button name="facultyUploadGradesBtn" type="button">Upload Grades</button>
+        </a>
+        <a id="facultyDeployNewCourse" href="/reqDeployNewCourse" th:if="${facultyEmail != null}">
+            <button name="facultyDeployNewCourseBtn" type="button">Deploy New Course</button>
         </a>
         <hr>
 
@@ -32,8 +34,18 @@
                 <th>Available Slots</th>
                 <th>Total Slots</th>
             </tr>
+
+            <tr th:each="course : ${availableCourses}">
+                <td th:text="${course.courseID}"></td>
+                <td th:text="${course.courseName}"></td>
+                <td th:text="${course.courseStatus}"></td>
+                <td th:text="${course.availNumSlots}"></td>
+                <td th:text="${course.totalNumSlots}"></td>
+            </tr>
+
+            <!--
             <tr>
-                <td>1</td>
+                <td>23489723489345729834</td>
                 <td>Course-1</td>
                 <td>Open</td>
                 <td>2</td>
@@ -53,6 +65,8 @@
                 <td>10</td>
                 <td>20</td>
             </tr>
+            -->
+
         </table>
     </body>
 </html>
