@@ -34,24 +34,76 @@ public class APIController {
 
     @GetMapping("/reqAvailablecourses")
     public String reqAvailableCourses(){
-        // Send to availableCourses Node
+        /*
+        // Hostname of Available Courses Node
+        String hostname = ""; // <--------------------------------- CHANGE HOSTNAME to VM's HOSTNAME (run "hostname" on cmd at VM)
+
+        // Send to Available Courses Node
+        String tempUrl = "http://"+ hostname + ":8080/reqAvailablecourses";
+
+        // Send request and receive response
+        String response = restTemplate.postForObject(tempUrl, null, String.class); // Send request to the node
+
+        //System.out.println(IPConfig.ipv4Address); <-- To test IPv4 Address Connection
+        return response;
+        */
+
         return "availableCourses";
     }
 
     @GetMapping("/reqEnrollcourse")
     public String reqEnrollCourse(){
-        // Send to enrollCourse Node
+        /*
+        // Hostname of Enroll Courses Node
+        String hostname = ""; // <--------------------------------- CHANGE HOSTNAME to VM's HOSTNAME (run "hostname" on cmd at VM)
+
+        // Send to Available Courses Node
+        String tempUrl = "http://"+ hostname + ":8080/reqEnrollcourse";
+
+        // Send request and receive response
+        String response = restTemplate.postForObject(tempUrl, null, String.class); // Send request to the node
+
+        //System.out.println(IPConfig.ipv4Address); <-- To test IPv4 Address Connection
+        return response;
+         */
         return "enrollCourse";
     }
 
     @GetMapping("/reqViewprevgrades")
     public String reqViewPrevGrades(){
-        // Send to enrollCourse Node
+        /*
+        // Hostname of View Preview Grades Node
+        String hostname = ""; // <--------------------------------- CHANGE HOSTNAME to VM's HOSTNAME (run "hostname" on cmd at VM)
+
+        // Send to Available Courses Node
+        String tempUrl = "http://"+ hostname + ":8080/reqViewprevgrades";
+
+        // Send request and receive response
+        String response = restTemplate.postForObject(tempUrl, null, String.class); // Send request to the node
+
+        //System.out.println(IPConfig.ipv4Address); <-- To test IPv4 Address Connection
+        return response;
+         */
+
         return "viewPrevGrades";
     }
 
     @GetMapping("/reqUploadgrades")
     public String reqUploadGrades(){
+        /*
+        // Hostname of Faculty Upload Grades Node
+        String hostname = ""; // <--------------------------------- CHANGE HOSTNAME to VM's HOSTNAME (run "hostname" on cmd at VM)
+
+        // Send to Available Courses Node
+        String tempUrl = "http://"+ hostname + ":8080/reqUploadgrades";
+
+        // Send request and receive response
+        String response = restTemplate.postForObject(tempUrl, null, String.class); // Send request to the node
+
+        //System.out.println(IPConfig.ipv4Address); <-- To test IPv4 Address Connection
+        return response;
+        */
+
         return "uploadGrades";
     }
 }
