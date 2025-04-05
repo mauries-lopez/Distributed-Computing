@@ -126,18 +126,22 @@ public class APIController {
         enrollmentData.put("email", email);
         enrollmentData.put("courseID", courseID);
 
-        // Send request and receive response
-        String response = restTemplate.postForObject(tempUrl, enrollmentData, String.class);
+        try{
+            // Send request and receive response
+            String response = restTemplate.postForObject(tempUrl, enrollmentData, String.class);
 
-        // If Success, fetch all enlisted courses made by the STUDENT!
-        if ("success".equals(response)) // Ask the node to give me my enlisted courses
-        {
-            helperFetchEnlistedCourses(hostname, email, model);
+            // If Success, fetch all enlisted courses made by the STUDENT!
+            if ("success".equals(response)) // Ask the node to give me my enlisted courses
+            {
+                helperFetchEnlistedCourses(hostname, email, model);
+            } else {
+                helperFetchEnlistedCourses(hostname, email, model);
+                model.addAttribute("errorMessage", response);
+            }
             return "enrollCourse";
-        } else {
-            helperFetchEnlistedCourses(hostname, email, model);
-            model.addAttribute("errorMessage", response);
-            return "enrollCourse";
+        } catch ( Exception ex ){
+            model.addAttribute("errorMessage", "Feature is unavailable");
+            return "uploadGrades";
         }
     }
 
@@ -224,7 +228,7 @@ public class APIController {
     }
 
     @GetMapping("/reqUploadgrades")
-    public String reqUploadGrades(){
+    public String reqUploadGrades(Model model){
 
         // Hostname of Faculty Upload Grades Node
         String hostname = "PCTWO"; // <--------------------------------- CHANGE HOSTNAME to VM's HOSTNAME (run "hostname" on cmd at VM)
@@ -232,11 +236,14 @@ public class APIController {
         // Send to Available Courses Node
         String tempUrl = "http://"+ hostname + ":8080/reqUploadgrades";
 
-        // Send request and receive response
-        String response = restTemplate.postForObject(tempUrl, null, String.class); // Send request to the node
-
-        //System.out.println(IPConfig.ipv4Address); <-- To test IPv4 Address Connection
-        return response;
+        try{
+            // Send request and receive response
+            String response = restTemplate.postForObject(tempUrl, null, String.class); // Send request to the node
+            return "uploadGrades";
+        } catch (Exception ex){
+            model.addAttribute("errorMessage", "Feature is unavailable");
+            return "uploadGrades";
+        }
     }
 
     // This is related to reqUploadGrades
@@ -255,17 +262,21 @@ public class APIController {
         gradeData.put("courseID", courseID);
         gradeData.put("courseGrade", courseGrade);
 
-        // Send request and receive response
-        String response = restTemplate.postForObject(tempUrl, gradeData, String.class);
+        try{
+            // Send request and receive response
+            String response = restTemplate.postForObject(tempUrl, gradeData, String.class);
 
-        if ("success".equals(response)){
-            // Add data to the model to be used in the HTML view
-            model.addAttribute("response", "Successfully Graded!");
-        } else {
-            model.addAttribute("response", response);
+            if ("success".equals(response)){
+                // Add data to the model to be used in the HTML view
+                model.addAttribute("response", "Successfully Graded!");
+            } else {
+                model.addAttribute("response", response);
+            }
+            return "uploadGrades";
+        } catch (Exception ex){
+            model.addAttribute("errorMessage", "Feature is unavailable");
+            return "uploadGrades";
         }
-
-        return "uploadGrades";
     }
 
     @GetMapping("/reqDeployNewCourse")

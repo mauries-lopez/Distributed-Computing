@@ -98,7 +98,22 @@ public class DatabaseController {
                             courseName = courseID.getCourseName();
                         }
                     }
-                    // Save the grade of the specific student
+
+                    // Check if Student is graded already
+                    List<Grades> listOfGrades = gradesRepository.findByEmail(gradeData.get("email"));
+                    for (Grades grade : listOfGrades) {
+                        if (grade.getCourseID().equals(gradeData.get("courseID"))) {
+                            return "Student has been graded already";
+                        }
+                    }
+
+                    // Check if Student is enlisted to the course
+                    for ( Student student: listOfStudents ){
+                        if (!student.getEnlistedCourseID().equals(gradeData.get("courseID"))){
+                            return "Student is not enrolled to the course";
+                        }
+                    }
+
                     gradesRepository.save(new Grades(gradeData.get("email"), gradeData.get("courseID"), courseName, gradeData.get("courseGrade")));
 
                     return "success";
@@ -106,7 +121,7 @@ public class DatabaseController {
                     return "Course not found";
                 }
             } else {
-                return "Student not found";
+                return "Student not enrolled/found/valid";
             }
         } catch (Exception ex) {
             return "error";

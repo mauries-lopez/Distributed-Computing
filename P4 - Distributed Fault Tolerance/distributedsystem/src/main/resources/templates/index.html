@@ -23,7 +23,6 @@
                 <input type="text" name="email" style="display: none;" th:value="${userEmail}">
                 <button class="featureBtn" name="viewPrevGradesBtn" type="submit">View Previous Grades</button>
             </form>
-
             <a id="facultyUploadGradesAnc" href="/reqUploadgrades" th:if="${facultyEmail != null}">
                 <button class="featureBtn" name="facultyUploadGradesBtn" type="button">Upload Grades</button>
             </a>
