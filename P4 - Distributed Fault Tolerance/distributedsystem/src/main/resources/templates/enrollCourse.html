@@ -4,69 +4,74 @@
         <meta charset="UTF-8">
         <title>Enroll Course(s)</title>
     </head>
+    <style>
+        .featureBtn{
+            padding: 10px 10px;
+            width: 100px;
+        }
+    </style>
     <body>
-        <a href="/reqLogout">
-            <button name="logoutBtn" type="button">Logout</button>
-        </a>
-        <a href="/reqAvailablecourses">
-            <button name="availableCoursesBtn" type="button">View Available Courses</button>
-        </a>
-        <form action="/reqEnrollcourse" method="post">
-            <input type="text" name="email" style="display: none;" th:value="${userEmail}">
-            <button name="enrollCourseBtn" type="submit">Enroll Course(s)</button>
-        </form>
-        <a href="/reqViewprevgrades">
-            <button name="viewPrevGradesBtn" type="button">View Previous Grades</button>
-        </a>
-        <a id="facultyUploadGradesAnc" href="/reqUploadgrades" th:if="${facultyEmail != null}">
-            <button name="facultyUploadGradesBtn" type="button">Upload Grades</button>
-        </a>
-        <a id="facultyDeployNewCourse" href="/reqDeployNewCourse" th:if="${facultyEmail != null}">
-            <button name="facultyDeployNewCourseBtn" type="button">Deploy New Course</button>
-        </a>
-        <hr>
-        <h1>Enroll Courses</h1>
-        <p><b>Email:</b> <span th:text="${userEmail}">[email here]</span></p>
-        <!--
-        <p><b>ID Number:</b> 12345678</p>
-        <p><b>Program Code:</b> BSCS-ST</p>
-        -->
-        <table id="coursesEnrolled">
-            <tr>
-                <th>Course ID</th>
-                <th>Course Name</th>
-                <th>Status</th>
-            </tr>
-
-            <!-- GIVING ERRORS!! -->
-            <tr th:each="student : ${studentEnlistedCourses}">
-                <td th:text="${student.enlistedCourseID}"></td>
-                <td th:text="${student.enlistedCourseName}"></td>
-                <<td>Enlisted</td>
-            </tr>
-
-        </table>
-        <hr>
-        <table id="courseToEnlist">
-            <tr>
-                <th>Course ID</th>
-                <th>Course Name</th>
-                <th>Confirm</th>
-            </tr>
-            <form action="/submitEnrollACourse" method="post">
-                <tr>
-                    <input type="text" id="email" name="email" style="display: none;" th:value="${userEmail}">
-                    <td>
-                        <input type="text" id="courseID" name="courseID">
-                    </td>
-                    <td>
-                        <input type="text" id="courseName" name="courseName">
-                    </td>
-                    <td>
-                        <button name="enlistBtn" type="submit">Enlist</button>
-                    </td>
-                </tr>
+        <div style="width:100px; length:500px">
+            <a href="/reqAvailablecourses" th:if="${userEmail != null}">
+                <button class="featureBtn"  name="availableCoursesBtn" type="button">View Available Courses</button>
+            </a>
+            <form action="/reqEnrollcourse" method="post" th:if="${userEmail != null}">
+                <input type="text" name="email" style="display: none;" th:value="${userEmail}">
+                <button class="featureBtn"  name="enrollCourseBtn" type="submit">Enroll Course(s)</button>
             </form>
-        </table>
+            <form action="/reqViewprevgrades" method="post" th:if="${userEmail != null}">
+                <input type="text" name="email" style="display: none;" th:value="${userEmail}">
+                <button class="featureBtn" name="viewPrevGradesBtn" type="submit">View Previous Grades</button>
+            </form>
+
+            <a id="facultyUploadGradesAnc" href="/reqUploadgrades" th:if="${facultyEmail != null}">
+                <button class="featureBtn" name="facultyUploadGradesBtn" type="button">Upload Grades</button>
+            </a>
+            <a id="facultyDeployNewCourse" href="/reqDeployNewCourse" th:if="${facultyEmail != null}">
+                <button class="featureBtn" name="facultyDeployNewCourseBtn" type="button">Deploy New Course</button>
+            </a>
+            <a href="/logout">
+                <button class="featureBtn" name="logoutBtn" type="button">Logout</button>
+            </a>
+        </div>
+        <hr>
+        <p th:text="${errorMessage}">[]</p>
+        <div th:if="${errorMessage != 'Feature is unavailable'}">
+            <h1>Enroll Courses</h1>
+            <p><b>Email:</b> <span th:text="${userEmail}">[email here]</span></p>
+            <h3 th:if="${#lists.isEmpty(studentEnlistedCourses)}"> No record </h3>
+            <div th:if="${!#lists.isEmpty(studentEnlistedCourses)}">
+                <table id="coursesEnrolled">
+                    <tr>
+                        <th>Course ID</th>
+                        <th>Course Name</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr th:each="student : ${studentEnlistedCourses}">
+                        <td th:text="${student.enlistedCourseID}"></td>
+                        <td th:text="${student.enlistedCourseName}"></td>
+                        <<td>Enlisted</td>
+                    </tr>
+                </table>
+            </div>
+            <hr>
+            <table id="courseToEnlist">
+                <tr>
+                    <th>Course ID</th>
+                    <th>Confirm</th>
+                </tr>
+                <form action="/submitEnrollACourse" method="post">
+                    <tr>
+                        <input type="text" id="email" name="email" style="display: none;" th:value="${userEmail}">
+                        <td>
+                            <input type="text" id="courseID" name="courseID">
+                        </td>
+                        <td>
+                            <button name="enlistBtn" type="submit">Enlist</button>
+                        </td>
+                    </tr>
+                </form>
+            </table>
+        </div>
     </body>
 </html>

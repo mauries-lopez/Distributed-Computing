@@ -4,26 +4,35 @@
         <title>Distributed System</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     </head>
-
+    <style>
+        .featureBtn{
+            padding: 10px 10px;
+            width: 100px;
+        }
+    </style>
     <body>
-        <a href="/reqLogout">
-            <button name="logoutBtn" type="button">Logout</button>
-        </a>
-        <a href="/reqAvailablecourses">
-            <button name="availableCoursesBtn" type="button">View Available Courses</button>
-        </a>
-        <form action="/reqEnrollcourse" method="post">
-            <input type="text" id="email" name="email" style="display: none;" th:value="${userEmail}">
-            <button name="enrollCourseBtn" type="submit">Enroll Course(s)</button>
-        </form>
-        <a href="/reqViewprevgrades">
-            <button name="viewPrevGradesBtn" type="button">View Previous Grades</button>
-        </a>
-        <a id="facultyUploadGradesAnc" href="/reqUploadgrades" th:if="${facultyEmail != null}">
-            <button name="facultyUploadGradesBtn" type="button">Upload Grades</button>
-        </a>
-        <a id="facultyDeployNewCourse" href="/reqDeployNewCourse" th:if="${facultyEmail != null}">
-            <button name="facultyDeployNewCourseBtn" type="button">Deploy New Course</button>
-        </a>
+        <div style="width:100px; length:500px">
+            <a href="/reqAvailablecourses" th:if="${userEmail != null}">
+                <button class="featureBtn"  name="availableCoursesBtn" type="button">View Available Courses</button>
+            </a>
+            <form action="/reqEnrollcourse" method="post" th:if="${userEmail != null}">
+                <input type="text" name="email" style="display: none;" th:value="${userEmail}">
+                <button class="featureBtn"  name="enrollCourseBtn" type="submit">Enroll Course(s)</button>
+            </form>
+            <form action="/reqViewprevgrades" method="post" th:if="${userEmail != null}">
+                <input type="text" name="email" style="display: none;" th:value="${userEmail}">
+                <button class="featureBtn" name="viewPrevGradesBtn" type="submit">View Previous Grades</button>
+            </form>
+
+            <a id="facultyUploadGradesAnc" href="/reqUploadgrades" th:if="${facultyEmail != null}">
+                <button class="featureBtn" name="facultyUploadGradesBtn" type="button">Upload Grades</button>
+            </a>
+            <a id="facultyDeployNewCourse" href="/reqDeployNewCourse" th:if="${facultyEmail != null}">
+                <button class="featureBtn" name="facultyDeployNewCourseBtn" type="button">Deploy New Course</button>
+            </a>
+            <a href="/logout">
+                <button class="featureBtn" name="logoutBtn" type="button">Logout</button>
+            </a>
+        </div>
     </body>
 </html>

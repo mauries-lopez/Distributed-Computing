@@ -4,54 +4,54 @@
         <meta charset="UTF-8">
         <title>View Previous Grades</title>
     </head>
+    <style>
+        .featureBtn{
+            padding: 10px 10px;
+            width: 100px;
+        }
+    </style>
     <body>
-        <a href="/reqLogout">
-            <button name="logoutBtn" type="button">Logout</button>
-        </a>
-        <a href="/reqAvailablecourses">
-            <button name="availableCoursesBtn" type="button">View Available Courses</button>
-        </a>
-        <form action="/reqEnrollcourse" method="post">
-            <input type="text" id="email" name="email" style="display: none;" th:value="${userEmail}">
-            <button name="enrollCourseBtn" type="submit">Enroll Course(s)</button>
-        </form>
-        <a href="/reqViewprevgrades">
-            <button name="viewPrevGradesBtn" type="button" disabled>View Previous Grades</button>
-        </a>
-        <a id="facultyUploadGradesAnc" href="/reqUploadgrades" th:if="${facultyEmail != null}">
-            <button name="facultyUploadGradesBtn" type="button">Upload Grades</button>
-        </a>
-        <a id="facultyDeployNewCourse" href="/reqDeployNewCourse" th:if="${facultyEmail != null}">
-            <button name="facultyDeployNewCourseBtn" type="button">Deploy New Course</button>
-        </a>
+        <div style="width:100px; length:500px">
+            <a href="/reqAvailablecourses" th:if="${userEmail != null}">
+                <button class="featureBtn"  name="availableCoursesBtn" type="button">View Available Courses</button>
+            </a>
+            <form action="/reqEnrollcourse" method="post" th:if="${userEmail != null}">
+                <input type="text" name="email" style="display: none;" th:value="${userEmail}">
+                <button class="featureBtn"  name="enrollCourseBtn" type="submit">Enroll Course(s)</button>
+            </form>
+            <form action="/reqViewprevgrades" method="post" th:if="${userEmail != null}">
+                <input type="text" name="email" style="display: none;" th:value="${userEmail}">
+                <button class="featureBtn" name="viewPrevGradesBtn" type="submit">View Previous Grades</button>
+            </form>
+
+            <a id="facultyUploadGradesAnc" href="/reqUploadgrades" th:if="${facultyEmail != null}">
+                <button class="featureBtn" name="facultyUploadGradesBtn" type="button">Upload Grades</button>
+            </a>
+            <a id="facultyDeployNewCourse" href="/reqDeployNewCourse" th:if="${facultyEmail != null}">
+                <button class="featureBtn" name="facultyDeployNewCourseBtn" type="button">Deploy New Course</button>
+            </a>
+            <a href="/logout">
+                <button class="featureBtn" name="logoutBtn" type="button">Logout</button>
+            </a>
+        </div>
         <hr>
-        <h1>Previous Grades</h1>
-        <p><b>Email:</b> <span th:text="${userEmail}">[email here]</span></p>
-        <!--
-        <p><b>ID Number:</b> 12345678</p>
-        <p><b>Program Code:</b> BSCS-ST</p>
-        -->
-        <table id="previousGrades">
-            <tr>
-                <th>Course ID</th>
-                <th>Course Name</th>
-                <th>Grade</th>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>Course-1</td>
-                <td>3.0</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Course-2</td>
-                <td>3.0</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Course-3</td>
-                <td>3.0</td>
-            </tr>
-        </table>
+        <p th:text="${errorMessage}">[]</p>
+        <div th:if="${errorMessage != 'Feature is unavailable'}">
+            <h1>Previous Grades</h1>
+            <p><b>Email:</b> <span th:text="${userEmail}">[email here]</span></p>
+            <h3 th:if="${#lists.isEmpty(studentPrevGrades)}"> No record </h3>
+            <table id="previousGrades" th:if="${!#lists.isEmpty(studentPrevGrades)}">
+                <tr>
+                    <th>Course ID</th>
+                    <th>Course Name</th>
+                    <th>Grade</th>
+                </tr>
+                <tr th:each="prevGrades : ${studentPrevGrades}">
+                    <td th:text="${prevGrades.courseID}"></td>
+                    <td th:text="${prevGrades.courseName}"></td>
+                    <td th:text="${prevGrades.courseGrade}"></td>
+                </tr>
+            </table>
+        </div>
     </body>
 </html>

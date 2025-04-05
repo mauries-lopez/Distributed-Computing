@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
-        <title>View Available Courses</title>
+        <title>Deploy Course</title>
     </head>
     <style>
         .featureBtn{
@@ -35,26 +35,5 @@
             </a>
         </div>
         <hr>
-        <p th:text="${errorMessage}">[]</p>
-        <h3 th:if="${errorMessage != 'Feature is unavailable' && #lists.isEmpty(availableCourses)}"> No Available Course(s) </h3>
-        <div th:if="${errorMessage != 'Feature is unavailable' && !#lists.isEmpty(availableCourses)}">
-            <h1>Available Courses</h1>
-            <table id="courseList">
-                <tr>
-                    <th>Course ID</th>
-                    <th>Course Name</th>
-                    <th>Status</th>
-                    <th>Available Slots</th>
-                    <th>Total Slots</th>
-                </tr>
-                <tr th:each="course : ${availableCourses}">
-                    <td th:text="${course.courseID}"></td>
-                    <td th:text="${course.courseName}"></td>
-                    <td th:text="${course.courseStatus}"></td>
-                    <td th:text="${course.availNumSlots}"></td>
-                    <td th:text="${course.totalNumSlots}"></td>
-                </tr>
-            </table>
-        </div>
     </body>
 </html>

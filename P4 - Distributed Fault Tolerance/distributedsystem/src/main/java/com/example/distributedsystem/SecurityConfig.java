@@ -14,14 +14,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF protection
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated() // Require authentication for all requests
+                        .anyRequest().authenticated()
+                )
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/successLogout")
+                        .permitAll()
                 )
                 .oauth2Login(Customizer.withDefaults()); // Enable OAuth2 login
 
         return http.build();
     }
-
-
 }

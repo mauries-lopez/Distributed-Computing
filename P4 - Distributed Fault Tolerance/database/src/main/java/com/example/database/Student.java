@@ -1,6 +1,7 @@
 package com.example.database;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -20,7 +21,7 @@ public class Student {
     @Override
     public String toString() {
         return String.format(
-                "Student[email='%s', enlistedCourseID='%s', enlistedCourseName='%s'",
+                "Student[email='%s', enlistedCourseID='%s', enlistedCourseName='%s']",
                 email, enlistedCourseID, enlistedCourseName
         );
     }

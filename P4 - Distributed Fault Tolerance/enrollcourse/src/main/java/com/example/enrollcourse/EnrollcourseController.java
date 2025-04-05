@@ -40,7 +40,6 @@ public class EnrollcourseController {
         Map<String, String> enrollmentDataToDB = new HashMap<>();
         enrollmentDataToDB.put("email", enrollmentData.get("email"));
         enrollmentDataToDB.put("courseID", enrollmentData.get("courseID"));
-        enrollmentDataToDB.put("courseName", enrollmentData.get("courseName"));
 
         // Send request and receive response
         String response = restTemplate.postForObject(tempUrl, enrollmentDataToDB, String.class); // Send request to the node

@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "course") // This will map the data directly to students collection
 public class Course {
 
+    @Id
     private String courseID;
     private String courseName;
     private String courseStatus;
