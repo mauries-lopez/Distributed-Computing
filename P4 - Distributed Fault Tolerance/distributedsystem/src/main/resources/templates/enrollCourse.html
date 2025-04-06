@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Enroll Course(s)</title>
+        <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
     </head>
     <style>
         .featureBtn{
@@ -16,14 +17,15 @@
                 <button class="featureBtn"  name="availableCoursesBtn" type="button">View Available Courses</button>
             </a>
             <form action="/reqEnrollcourse" method="post" th:if="${userEmail != null}">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}">
                 <input type="text" name="email" style="display: none;" th:value="${userEmail}">
                 <button class="featureBtn"  name="enrollCourseBtn" type="submit">Enroll Course(s)</button>
             </form>
             <form action="/reqViewprevgrades" method="post" th:if="${userEmail != null}">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}">
                 <input type="text" name="email" style="display: none;" th:value="${userEmail}">
                 <button class="featureBtn" name="viewPrevGradesBtn" type="submit">View Previous Grades</button>
             </form>
-
             <a id="facultyUploadGradesAnc" href="/reqUploadgrades" th:if="${facultyEmail != null}">
                 <button class="featureBtn" name="facultyUploadGradesBtn" type="button">Upload Grades</button>
             </a>
