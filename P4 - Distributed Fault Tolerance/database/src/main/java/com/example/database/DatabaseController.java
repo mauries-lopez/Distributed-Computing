@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Console;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,7 +14,6 @@ public class DatabaseController {
 
     @Autowired
     private CourseRepository courseRepository;
-
     @Autowired
     private StudentRepository studentRepository;
     @Autowired
@@ -108,14 +108,19 @@ public class DatabaseController {
                     }
 
                     // Check if Student is enlisted to the course
-                    for ( Student student: listOfStudents ){
-                        if (!student.getEnlistedCourseID().equals(gradeData.get("courseID"))){
-                            return "Student is not enrolled to the course";
+                    boolean isEnrolled = false;
+                    for (Student student : listOfStudents) {
+                        if (student.getEnlistedCourseID().equals(gradeData.get("courseID"))) {
+                            isEnrolled = true;
+                            break; // stop looping, found a match
                         }
                     }
 
-                    gradesRepository.save(new Grades(gradeData.get("email"), gradeData.get("courseID"), courseName, gradeData.get("courseGrade")));
+                    if (!isEnrolled) {
+                        return "Student is not enrolled to the course";
+                    }
 
+                    gradesRepository.save(new Grades(gradeData.get("email"), gradeData.get("courseID"), courseName, gradeData.get("courseGrade")));
                     return "success";
                 } else {
                     return "Course not found";
@@ -124,6 +129,23 @@ public class DatabaseController {
                 return "Student not enrolled/found/valid";
             }
         } catch (Exception ex) {
+            return "error";
+        }
+    }
+
+    @PostMapping("/submitToDBNewCourse")
+    public String submitNewCourse(@RequestBody Map<String, String> newCourseData){
+        try{
+            // Check if the New Course is deployed already
+            List<Course> listOfCourse = courseRepository.findByCourseID(newCourseData.get("courseID"));
+            for ( Course course : listOfCourse ){
+                if ( course.getCourseID().equals(newCourseData.get("courseID"))){
+                    return "Course is already deployed"; // Course is already deployed
+                }
+            }
+            courseRepository.save(new Course(newCourseData.get("courseID"), newCourseData.get("courseName"), "Open",  Integer.parseInt(newCourseData.get("numTotalSlots")), Integer.parseInt(newCourseData.get("numTotalSlots"))));
+            return "success";
+        } catch ( Exception ex ){
             return "error";
         }
     }

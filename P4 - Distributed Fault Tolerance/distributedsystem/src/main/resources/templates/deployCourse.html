@@ -35,5 +35,38 @@
             </a>
         </div>
         <hr>
+        <p th:text="${errorMessage}">[]</p>
+        <div th:if="${errorMessage != 'Feature is unavailable'}">
+            <h1>Deploy Course</h1>
+            <form action="/submitNewCourse" method="post">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Course ID</th>
+                        <th>Course Name</th>
+                        <th>Total Slots</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" id="courseID" name="courseID" required maxlength="5" oninput="this.value = this.value.toUpperCase();">
+                        </td>
+                        <td>
+                            <input type="text" id="courseName" name="courseName" required oninput="this.value = this.value.toUpperCase();">
+                        </td>
+                        <td>
+                            <input type="number" id="numTotalSlots" name="numTotalSlots" min="5" max="40" required step="5">
+                        </td>
+                        <td>
+                            <button name="deployCourseBtn" type="submit">Deploy</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+            <p th:text="${response}">[]</p>
+        </div>
     </body>
 </html>

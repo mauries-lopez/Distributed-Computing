@@ -280,19 +280,52 @@ public class APIController {
     }
 
     @GetMapping("/reqDeployNewCourse")
-    public String reqDeployNewCourse(){
+    public String reqDeployNewCourse(Model model){
 
         // Hostname of Deploy New Course Node
-        String hostname = "PCTWO"; // <--------------------------------- CHANGE HOSTNAME to VM's HOSTNAME (run "hostname" on cmd at VM)
+        String hostname = "PCONE"; // <--------------------------------- CHANGE HOSTNAME to VM's HOSTNAME (run "hostname" on cmd at VM)
 
         // Send to Available Courses Node
         String tempUrl = "http://"+ hostname + ":8080/reqDeployNewCourse";
 
-        // Send request and receive response
-        String response = restTemplate.postForObject(tempUrl, null, String.class); // Send request to the node
-
-        //System.out.println(IPConfig.ipv4Address); <-- To test IPv4 Address Connection
-        return response;
+        try{
+            // Send request and receive response
+            String response = restTemplate.postForObject(tempUrl, null, String.class); // Send request to the node
+            return response;
+        } catch ( Exception ex ){
+            model.addAttribute("errorMessage", "Feature is unavailable");
+            return "deployCourse";
+        }
     }
 
+    @PostMapping("/submitNewCourse")
+    public String submitNewCourse(@RequestParam("courseID") String courseID, @RequestParam("courseName") String courseName, @RequestParam("numTotalSlots") String numTotalSlots, Model model){
+        // Hostname of Available Courses Node
+        String hostname = "PCONE"; // <--------------------------------- CHANGE HOSTNAME to VM's HOSTNAME (run "hostname" on cmd at VM)
+
+        // Send to Available Courses Node
+        String tempUrl = "http://" + hostname + ":8080/submitNewCourse";
+
+        // Create Object using Map
+        Map<String, String> newCourseData = new HashMap<>();
+        newCourseData.put("courseID", courseID);
+        newCourseData.put("courseName", courseName);
+        newCourseData.put("numTotalSlots", numTotalSlots);
+
+        try{
+            // Send request and receive response
+            String response = restTemplate.postForObject(tempUrl, newCourseData, String.class);
+
+            if ("success".equals(response)){
+                // Add data to the model to be used in the HTML view
+                model.addAttribute("response", "Successfully Course Deployed!");
+            } else {
+                model.addAttribute("response", response);
+            }
+            return "deployCourse";
+        } catch (Exception ex){
+            model.addAttribute("errorMessage", "Feature is unavailable");
+            return "deployCourse";
+        }
+    }
 }
